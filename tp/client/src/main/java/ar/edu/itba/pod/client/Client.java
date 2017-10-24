@@ -1,6 +1,10 @@
 package ar.edu.itba.pod.client;
 
+import ar.edu.itba.pod.mappers.InhabitantsByRegionMapper;
 import ar.edu.itba.pod.mappers.WordOccurrencesMapper;
+import ar.edu.itba.pod.model.ActivityCondition;
+import ar.edu.itba.pod.model.Person;
+import ar.edu.itba.pod.reducers.InhabitantsByRegionReducerFactory;
 import ar.edu.itba.pod.reducers.WordOccurrencesReducerFactory;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.client.config.ClientConfig;
@@ -24,19 +28,22 @@ public class Client {
         final ClientConfig ccfg = new ClientConfig();
         final HazelcastInstance client = HazelcastClient.newHazelcastClient(ccfg);
 
-        IMap<String,String> map = client.getMap("libros");
-        map.put("Dracula","hola soy dracula hola no soy dracula hola soy la señora de dracula hola soy la seniora de dracula iras a Anglos muy proximamente");
-        map.put("Pepito","Al temploooo");
-        map.put("Jorge","Soy jorge");
-        map.put("Judio","Dinero dinero");
-        map.put("Barto","Me la como");
+        IMap<Long,Person> map = client.getMap("people");
+        Long count = new Long(0);
+        map.put(count++, new Person(ActivityCondition.ECONOMICALLY_INACTIVE,1,"Hola","Buenos Aires"));
+        map.put(count++, new Person(ActivityCondition.ECONOMICALLY_INACTIVE,1,"Hola","Chubut"));
+        map.put(count++, new Person(ActivityCondition.ECONOMICALLY_INACTIVE,1,"Hola","Chubut"));
+        map.put(count++, new Person(ActivityCondition.ECONOMICALLY_INACTIVE,1,"Hola","Buenos Aires"));
+        map.put(count++, new Person(ActivityCondition.ECONOMICALLY_INACTIVE,1,"Hola","Buenos Aires"));
+        map.put(count++, new Person(ActivityCondition.ECONOMICALLY_INACTIVE,1,"Hola","Catamarca"));
+        map.put(count++, new Person(ActivityCondition.ECONOMICALLY_INACTIVE,1,"Hola","Buenos Aires"));
 
         JobTracker jobTracker = client.getJobTracker("tracker");
-        Job<String,String> job = jobTracker.newJob(KeyValueSource.fromMap(map));
+        Job<Long,Person> job = jobTracker.newJob(KeyValueSource.fromMap(map));
         try {
             ICompletableFuture<Map<String,Long>> future = job
-                    .mapper(new WordOccurrencesMapper("Dracula"))
-                    .reducer(new WordOccurrencesReducerFactory()).submit();
+                    .mapper(new InhabitantsByRegionMapper())
+                    .reducer(new InhabitantsByRegionReducerFactory()).submit();
             Map<String,Long> response = future.get();
             for(Map.Entry<String,Long> entry : response.entrySet()){
                 System.out.println(entry.getKey() + "\t\t" + entry.getValue());

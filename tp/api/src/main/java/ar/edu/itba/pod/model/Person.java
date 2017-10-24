@@ -1,6 +1,8 @@
 package ar.edu.itba.pod.model;
 
-public class Person {
+import java.io.Serializable;
+
+public class Person implements Serializable{
 
     private ActivityCondition activityCondition;
 

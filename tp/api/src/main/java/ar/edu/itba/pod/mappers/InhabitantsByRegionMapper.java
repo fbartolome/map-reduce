@@ -1,12 +1,13 @@
 package ar.edu.itba.pod.mappers;
 
+import ar.edu.itba.pod.model.Person;
 import com.hazelcast.mapreduce.Context;
 import com.hazelcast.mapreduce.Mapper;
 
-public class InhabitantsByRegionMapper implements Mapper<String,Integer,String,Integer> {
+public class InhabitantsByRegionMapper implements Mapper<Long,Person,String,Integer> {
 
   @Override
-  public void map(String s, Integer integer, Context<String, Integer> context) {
-    context.emit(s,1);
+  public void map(Long aLong, Person person, Context<String, Integer> context) {
+    context.emit(person.getProvinceName(),1);
   }
 }
