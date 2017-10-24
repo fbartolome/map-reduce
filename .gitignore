@@ -4,3 +4,10 @@ tp/\.DS_Store
 *.iml
 
 \.DS_Store
+
+Map-Reduce/\.idea/
+tp/\.idea/
+
+tp/api/target/
+tp/client/target/
+tp/server/target/
