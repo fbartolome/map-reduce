@@ -7,12 +7,12 @@ public class InhabitantsByRegionReducerFactory implements ReducerFactory<String,
 
   @Override
   public Reducer<Integer, Long> newReducer(String s) {
-    return new InhabitantsByRegion();
+    return new InhabitantsByRegionReducer();
   }
 
-  private class InhabitantsByRegion extends Reducer<Integer,Long> {
+  private class InhabitantsByRegionReducer extends Reducer<Integer,Long> {
 
-    Long count = new Long(0);
+    private Long count = new Long(0);
 
     @Override
     public void reduce(Integer integer) {
