@@ -8,6 +8,6 @@ public class InhabitantsByRegionMapper implements Mapper<Long,Person,String,Inte
 
   @Override
   public void map(Long aLong, Person person, Context<String, Integer> context) {
-    context.emit(person.getProvinceName(),1);
+    context.emit(person.getRegion(),1);
   }
 }

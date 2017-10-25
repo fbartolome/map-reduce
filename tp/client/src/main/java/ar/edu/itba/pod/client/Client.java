@@ -37,6 +37,7 @@ public class Client {
         map.put(count++, new Person(ActivityCondition.ECONOMICALLY_INACTIVE,1,"Hola","Buenos Aires"));
         map.put(count++, new Person(ActivityCondition.ECONOMICALLY_INACTIVE,1,"Hola","Catamarca"));
         map.put(count++, new Person(ActivityCondition.ECONOMICALLY_INACTIVE,1,"Hola","Buenos Aires"));
+        map.put(count++, new Person(ActivityCondition.ECONOMICALLY_INACTIVE,1,"Hola","Neuquén"));
 
         JobTracker jobTracker = client.getJobTracker("tracker");
         Job<Long,Person> job = jobTracker.newJob(KeyValueSource.fromMap(map));
