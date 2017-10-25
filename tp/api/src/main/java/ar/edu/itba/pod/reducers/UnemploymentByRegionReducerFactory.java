@@ -3,6 +3,9 @@ package ar.edu.itba.pod.reducers;
 import ar.edu.itba.pod.model.ActivityCondition;
 import com.hazelcast.mapreduce.Reducer;
 import com.hazelcast.mapreduce.ReducerFactory;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 
 public class UnemploymentByRegionReducerFactory implements
     ReducerFactory<String,ActivityCondition,Double> {
@@ -28,7 +31,8 @@ public class UnemploymentByRegionReducerFactory implements
 
     @Override
     public Double finalizeReduce() {
-      return Double.valueOf(unemployed) / (employed + unemployed);
+      return BigDecimal.valueOf(Double.valueOf(unemployed) / (employed + unemployed))
+          .setScale(2,RoundingMode.CEILING).doubleValue();
     }
   }
 }
