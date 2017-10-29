@@ -46,7 +46,7 @@ public class Client {
         try {
             ICompletableFuture<List<Entry<String,Long>>> future = job
                     .mapper(new InhabitantsByRegionMapper())
-//                    .combiner(new AddCombinerFactory<>(new Long(0)))
+                    .combiner(new AddCombinerFactory<>(new Long(0)))
                     .reducer(new InhabitantsByRegionReducerFactory())
                     .submit(new OrderByCollator<>(false,true));
             List<Entry<String,Long>> response = future.get();

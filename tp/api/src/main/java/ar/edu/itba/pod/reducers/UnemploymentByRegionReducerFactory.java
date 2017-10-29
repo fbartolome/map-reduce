@@ -16,7 +16,7 @@ public class UnemploymentByRegionReducerFactory implements
   }
 
   private class UnemploymentByRegionReducer extends Reducer<ActivityCondition,Double>{
-
+    //TODO: synchronize?
     private Long employed = new Long(0);
     private Long unemployed = new Long(0);
 

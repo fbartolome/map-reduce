@@ -11,7 +11,7 @@ public class InhabitantsByRegionReducerFactory implements ReducerFactory<String,
   }
 
   private class InhabitantsByRegionReducer extends Reducer<Long,Long> {
-
+    //TODO: synchronize?
     private Long count = new Long(0);
 
     @Override
