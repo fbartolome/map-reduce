@@ -1,9 +1,10 @@
 package ar.edu.itba.pod.client;
 
-import ar.edu.itba.pod.mappers.UnemploymentIndexByRegionMapper;
+import ar.edu.itba.pod.collators.OrderByCollator;
+import ar.edu.itba.pod.mappers.InhabitantsByRegionMapper;
 import ar.edu.itba.pod.model.ActivityCondition;
 import ar.edu.itba.pod.model.Person;
-import ar.edu.itba.pod.reducers.UnemploymentByRegionReducerFactory;
+import ar.edu.itba.pod.reducers.InhabitantsByRegionReducerFactory;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.core.HazelcastInstance;
@@ -12,6 +13,8 @@ import com.hazelcast.core.IMap;
 import com.hazelcast.mapreduce.Job;
 import com.hazelcast.mapreduce.JobTracker;
 import com.hazelcast.mapreduce.KeyValueSource;
+import java.util.List;
+import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,11 +43,12 @@ public class Client {
         JobTracker jobTracker = client.getJobTracker("tracker");
         Job<Long,Person> job = jobTracker.newJob(KeyValueSource.fromMap(map));
         try {
-            ICompletableFuture<Map<String,Double>> future = job
-                    .mapper(new UnemploymentIndexByRegionMapper())
-                    .reducer(new UnemploymentByRegionReducerFactory()).submit();
-            Map<String,Double> response = future.get();
-            for(Map.Entry<String,Double> entry : response.entrySet()){
+            ICompletableFuture<List<Entry<String,Long>>> future = job
+                    .mapper(new InhabitantsByRegionMapper())
+                    .reducer(new InhabitantsByRegionReducerFactory())
+                    .submit(new OrderByCollator<>(false,true));
+            List<Entry<String,Long>> response = future.get();
+            for(Map.Entry<String,Long> entry : response){
                 System.out.println(entry.getKey() + "\t\t" + entry.getValue());
             }
         } catch (InterruptedException e) {
