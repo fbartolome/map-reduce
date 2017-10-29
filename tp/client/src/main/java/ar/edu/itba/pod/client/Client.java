@@ -1,6 +1,7 @@
 package ar.edu.itba.pod.client;
 
 import ar.edu.itba.pod.collators.OrderByCollator;
+import ar.edu.itba.pod.combiners.AddCombinerFactory;
 import ar.edu.itba.pod.mappers.InhabitantsByRegionMapper;
 import ar.edu.itba.pod.model.ActivityCondition;
 import ar.edu.itba.pod.model.Person;
@@ -45,6 +46,7 @@ public class Client {
         try {
             ICompletableFuture<List<Entry<String,Long>>> future = job
                     .mapper(new InhabitantsByRegionMapper())
+//                    .combiner(new AddCombinerFactory<>(new Long(0)))
                     .reducer(new InhabitantsByRegionReducerFactory())
                     .submit(new OrderByCollator<>(false,true));
             List<Entry<String,Long>> response = future.get();
