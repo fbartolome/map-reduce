@@ -1,9 +1,16 @@
 package ar.edu.itba.pod.client;
 
 import ar.edu.itba.pod.collators.OrderByCollator;
+import ar.edu.itba.pod.collators.TopAndOrderByCollator;
+import ar.edu.itba.pod.keyPredicates.ActivityConditionKeyPredicate;
+import ar.edu.itba.pod.keyPredicates.ProvinceKeyPredicate;
 import ar.edu.itba.pod.mappers.HomesByRegionMapper;
+import ar.edu.itba.pod.mappers.MostInhabitedProvinceDeptsMapper;
+import ar.edu.itba.pod.mappers.UnemploymentIndexByRegionMapper;
 import ar.edu.itba.pod.model.Person;
+import ar.edu.itba.pod.reducers.CountReducerFactory;
 import ar.edu.itba.pod.reducers.HomesByRegionReducerFactory;
+import ar.edu.itba.pod.reducers.UnemploymentByRegionReducerFactory;
 import ar.edu.itba.pod.utils.CSVReader;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.client.config.ClientConfig;
@@ -48,13 +55,13 @@ public class Client {
         JobTracker jobTracker = client.getJobTracker("tracker");
         Job<Long,Person> job = jobTracker.newJob(KeyValueSource.fromMap(map));
         try {
-            ICompletableFuture<List<Entry<String,Integer>>> future = job
-                    .mapper(new HomesByRegionMapper())
-//                    .combiner(new AddCombinerFactory<>(new Long(0)))
-                    .reducer(new HomesByRegionReducerFactory())
-                    .submit(new OrderByCollator<>(false,false));
-            List<Entry<String,Integer>> response = future.get();
-            for(Map.Entry<String,Integer> entry : response){
+            ICompletableFuture<List<Entry<String,Double>>> future = job
+                    .keyPredicate(new ActivityConditionKeyPredicate("people"))
+                    .mapper(new UnemploymentIndexByRegionMapper())
+                    .reducer(new UnemploymentByRegionReducerFactory())
+                    .submit(new TopAndOrderByCollator<>(20,false,false));
+            List<Entry<String,Double>> response = future.get();
+            for(Map.Entry<String,Double> entry : response){
                 System.out.println(entry.getKey() + "\t\t" + entry.getValue());
             }
         } catch (InterruptedException e) {

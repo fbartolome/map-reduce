@@ -9,9 +9,6 @@ public class UnemploymentIndexByRegionMapper implements Mapper<Long,Person,Strin
 
   @Override
   public void map(Long aLong, Person person, Context<String, ActivityCondition> context) {
-    if(person.getActivityCondition() == ActivityCondition.EMPLOYED ||
-        person.getActivityCondition() == ActivityCondition.UNEMPLOYED){
-      context.emit(person.getRegion(),person.getActivityCondition());
-    }
+    context.emit(person.getRegion(),person.getActivityCondition());
   }
 }
