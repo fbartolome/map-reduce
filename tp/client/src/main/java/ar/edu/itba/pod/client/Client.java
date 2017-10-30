@@ -25,9 +25,14 @@ public class Client {
     private static Logger logger = LoggerFactory.getLogger(Client.class);
 
     public static void main(String[] args) {
+
         logger.info("hazelcast Client Starting ...");
         final ClientConfig ccfg = new ClientConfig();
+        //TODO poner bien address
+        //10.17.65.164
+        ccfg.addAddress("127.0.0.1:5701");
         final HazelcastInstance client = HazelcastClient.newHazelcastClient(ccfg);
+
 
         IMap<Long,Person> map = client.getMap("people");
         Long count = new Long(0);

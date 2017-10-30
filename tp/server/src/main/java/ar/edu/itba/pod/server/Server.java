@@ -12,6 +12,7 @@ public class Server {
     public static void main(String[] args) {
         logger.info("hazelcast Server Starting ...");
         Config config = new Config();
+        config.setInstanceName("TPE-Cluster");
         HazelcastInstance h = Hazelcast.newHazelcastInstance(config);
     }
 }

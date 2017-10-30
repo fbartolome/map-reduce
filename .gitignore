@@ -11,3 +11,5 @@ tp/\.idea/
 tp/api/target/
 tp/client/target/
 tp/server/target/
+
+*.class
