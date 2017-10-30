@@ -1,10 +1,12 @@
 package ar.edu.itba.pod.client;
 
 import ar.edu.itba.pod.collators.OrderByCollator;
+import ar.edu.itba.pod.mappers.DepartmentAndProvinceByInhabitantMapper;
 import ar.edu.itba.pod.mappers.InhabitantsByRegionMapper;
 import ar.edu.itba.pod.model.ActivityCondition;
 import ar.edu.itba.pod.model.Person;
 import ar.edu.itba.pod.reducers.CountReducerFactory;
+import ar.edu.itba.pod.reducers.DepartmentAndProvinceReducerFactory;
 import ar.edu.itba.pod.utils.CSVReader;
 import ar.edu.itba.pod.reducers.CountReducerFactory;
 import com.hazelcast.client.HazelcastClient;
@@ -50,13 +52,13 @@ public class Client {
         JobTracker jobTracker = client.getJobTracker("tracker");
         Job<Long,Person> job = jobTracker.newJob(KeyValueSource.fromMap(map));
         try {
-            ICompletableFuture<List<Entry<String,Long>>> future = job
-                    .mapper(new InhabitantsByRegionMapper())
+            ICompletableFuture<List<Entry<String,Integer>>> future = job
+                    .mapper(new DepartmentAndProvinceByInhabitantMapper())
 //                    .combiner(new AddCombinerFactory<>(new Long(0)))
-                    .reducer(new CountReducerFactory<>())
+                    .reducer(new DepartmentAndProvinceReducerFactory())
                     .submit(new OrderByCollator<>(false,false));
-            List<Entry<String,Long>> response = future.get();
-            for(Map.Entry<String,Long> entry : response){
+            List<Entry<String,Integer>> response = future.get();
+            for(Map.Entry<String,Integer> entry : response){
                 System.out.println(entry.getKey() + "\t\t" + entry.getValue());
             }
         } catch (InterruptedException e) {
