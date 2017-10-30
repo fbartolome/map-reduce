@@ -35,7 +35,26 @@ public class Person implements Serializable{
         return provinceName;
     }
 
+<<<<<<< HEAD
     public String getRegion() {
         return region;
+=======
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Person person = (Person) o;
+
+        if (homeId != person.homeId) return false;
+        if (activityCondition != person.activityCondition) return false;
+        if (!departmentName.equals(person.departmentName)) return false;
+        return provinceName.equals(person.provinceName);
+    }
+
+    @Override
+    public int hashCode() {
+        return homeId;
+>>>>>>> 61e6033... CSVReader tested and working
     }
 }
