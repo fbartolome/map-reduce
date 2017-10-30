@@ -17,8 +17,8 @@ public class UnemploymentByRegionReducerFactory implements
 
   private class UnemploymentByRegionReducer extends Reducer<ActivityCondition,Double>{
 
-    private Long employed = new Long(0);
-    private Long unemployed = new Long(0);
+    private volatile long employed = 0;
+    private volatile long unemployed = 0;
 
     @Override
     public void reduce(ActivityCondition activityCondition) {
