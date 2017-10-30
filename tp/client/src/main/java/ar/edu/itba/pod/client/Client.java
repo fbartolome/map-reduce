@@ -1,12 +1,10 @@
 package ar.edu.itba.pod.client;
 
 import ar.edu.itba.pod.collators.OrderByCollator;
-import ar.edu.itba.pod.mappers.InhabitantsByRegionMapper;
-import ar.edu.itba.pod.model.ActivityCondition;
+import ar.edu.itba.pod.mappers.HomesByRegionMapper;
 import ar.edu.itba.pod.model.Person;
-import ar.edu.itba.pod.reducers.CountReducerFactory;
+import ar.edu.itba.pod.reducers.HomesByRegionReducerFactory;
 import ar.edu.itba.pod.utils.CSVReader;
-import ar.edu.itba.pod.reducers.CountReducerFactory;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.core.HazelcastInstance;
@@ -18,7 +16,6 @@ import com.hazelcast.mapreduce.KeyValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +39,7 @@ public class Client {
         ccfg.getNetworkConfig().setAddresses(addresses);
         final HazelcastInstance client = HazelcastClient.newHazelcastClient(ccfg);
 
+        //TODO sacar del CSV
         IMap<Long,Person> map = client.getMap("people");
         final AtomicLong count = new AtomicLong(0);
 
@@ -50,13 +48,13 @@ public class Client {
         JobTracker jobTracker = client.getJobTracker("tracker");
         Job<Long,Person> job = jobTracker.newJob(KeyValueSource.fromMap(map));
         try {
-            ICompletableFuture<List<Entry<String,Long>>> future = job
-                    .mapper(new InhabitantsByRegionMapper())
+            ICompletableFuture<List<Entry<String,Integer>>> future = job
+                    .mapper(new HomesByRegionMapper())
 //                    .combiner(new AddCombinerFactory<>(new Long(0)))
-                    .reducer(new CountReducerFactory<>())
+                    .reducer(new HomesByRegionReducerFactory())
                     .submit(new OrderByCollator<>(false,false));
-            List<Entry<String,Long>> response = future.get();
-            for(Map.Entry<String,Long> entry : response){
+            List<Entry<String,Integer>> response = future.get();
+            for(Map.Entry<String,Integer> entry : response){
                 System.out.println(entry.getKey() + "\t\t" + entry.getValue());
             }
         } catch (InterruptedException e) {
@@ -69,3 +67,5 @@ public class Client {
     }
 
 }
+
+
