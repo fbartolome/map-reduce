@@ -16,17 +16,11 @@ public class InhabitantsByRegionReducerFactory implements ReducerFactory<String,
 
     @Override
     public void reduce(Long aLong) {
-      //TODO: remove
-      System.out.println(aLong);
       count += aLong;
     }
 
     @Override
     public Long finalizeReduce() {
-      //TODO: remove
-      System.out.println("-------");
-      System.out.println(count);
-      System.out.println("-------");
       return count;
     }
   }

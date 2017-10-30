@@ -28,9 +28,10 @@ public class Client {
     public static void main(String[] args) {
 
         logger.info("hazelcast Client Starting ...");
+
         final ClientConfig ccfg = new ClientConfig();
 
-        //TODO deshardocdear esta lista
+        //TODO deshardocdear esta lista - PREGUNTAR estas addresses que serian?
         List<String> addresses = new ArrayList<>();
         addresses.add("10.17.65.164:5701");
         addresses.add("127.0.0.1:5701");
@@ -39,6 +40,7 @@ public class Client {
 
         IMap<Long,Person> map = client.getMap("people");
         Long count = new Long(0);
+
         map.put(count++, new Person(ActivityCondition.EMPLOYED,1,"Hola","Buenos Aires"));
         map.put(count++, new Person(ActivityCondition.EMPLOYED,1,"Hola","Chubut"));
         map.put(count++, new Person(ActivityCondition.ECONOMICALLY_INACTIVE,1,"Hola","Chubut"));
