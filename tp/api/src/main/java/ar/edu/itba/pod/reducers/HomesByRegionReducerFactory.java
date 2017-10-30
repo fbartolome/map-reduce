@@ -3,11 +3,9 @@ package ar.edu.itba.pod.reducers;
 import com.hazelcast.mapreduce.Reducer;
 import com.hazelcast.mapreduce.ReducerFactory;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 public class HomesByRegionReducerFactory implements ReducerFactory<String, Integer, Integer>{
-
 
     @Override
     public Reducer<Integer, Integer> newReducer(String s) {
@@ -16,7 +14,7 @@ public class HomesByRegionReducerFactory implements ReducerFactory<String, Integ
 
     private class HomesByRegionReducer extends Reducer<Integer, Integer>{
 
-        Set<Integer> homeIds = new HashSet<>();
+        ConcurrentSkipListSet homeIds = new ConcurrentSkipListSet();
 
         @Override
         public void reduce(Integer homeId) {
