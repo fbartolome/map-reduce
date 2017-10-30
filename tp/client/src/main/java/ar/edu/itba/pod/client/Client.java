@@ -1,7 +1,6 @@
 package ar.edu.itba.pod.client;
 
 import ar.edu.itba.pod.collators.OrderByCollator;
-import ar.edu.itba.pod.combiners.AddCombinerFactory;
 import ar.edu.itba.pod.mappers.InhabitantsByRegionMapper;
 import ar.edu.itba.pod.model.ActivityCondition;
 import ar.edu.itba.pod.model.Person;
@@ -14,12 +13,12 @@ import com.hazelcast.core.IMap;
 import com.hazelcast.mapreduce.Job;
 import com.hazelcast.mapreduce.JobTracker;
 import com.hazelcast.mapreduce.KeyValueSource;
-import java.util.List;
-import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 
 public class Client {
