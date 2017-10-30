@@ -4,7 +4,9 @@ import ar.edu.itba.pod.collators.OrderByCollator;
 import ar.edu.itba.pod.mappers.InhabitantsByRegionMapper;
 import ar.edu.itba.pod.model.ActivityCondition;
 import ar.edu.itba.pod.model.Person;
-import ar.edu.itba.pod.reducers.InhabitantsByRegionReducerFactory;
+import ar.edu.itba.pod.reducers.CountReducerFactory;
+import ar.edu.itba.pod.utils.CSVReader;
+import ar.edu.itba.pod.reducers.CountReducerFactory;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.core.HazelcastInstance;
@@ -16,11 +18,13 @@ import com.hazelcast.mapreduce.KeyValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class Client {
     private static Logger logger = LoggerFactory.getLogger(Client.class);
@@ -39,18 +43,9 @@ public class Client {
         final HazelcastInstance client = HazelcastClient.newHazelcastClient(ccfg);
 
         IMap<Long,Person> map = client.getMap("people");
-        Long count = new Long(0);
+        final AtomicLong count = new AtomicLong(0);
 
-        map.put(count++, new Person(ActivityCondition.EMPLOYED,1,"Hola","Buenos Aires"));
-        map.put(count++, new Person(ActivityCondition.EMPLOYED,1,"Hola","Chubut"));
-        map.put(count++, new Person(ActivityCondition.ECONOMICALLY_INACTIVE,1,"Hola","Chubut"));
-        map.put(count++, new Person(ActivityCondition.NO_DATA,1,"Hola","Buenos Aires"));
-        map.put(count++, new Person(ActivityCondition.EMPLOYED,1,"Hola","Buenos Aires"));
-        map.put(count++, new Person(ActivityCondition.UNEMPLOYED,1,"Hola","Catamarca"));
-        map.put(count++, new Person(ActivityCondition.UNEMPLOYED,1,"Hola","Buenos Aires"));
-        map.put(count++, new Person(ActivityCondition.UNEMPLOYED,1,"Hola","Neuquén"));
-
-
+        CSVReader.readCSV("./client/src/main/resources/census100.csv").stream().forEach(p -> map.put(count.getAndIncrement(), p));
 
         JobTracker jobTracker = client.getJobTracker("tracker");
         Job<Long,Person> job = jobTracker.newJob(KeyValueSource.fromMap(map));
@@ -58,8 +53,8 @@ public class Client {
             ICompletableFuture<List<Entry<String,Long>>> future = job
                     .mapper(new InhabitantsByRegionMapper())
 //                    .combiner(new AddCombinerFactory<>(new Long(0)))
-                    .reducer(new InhabitantsByRegionReducerFactory())
-                    .submit(new OrderByCollator<>(false,true));
+                    .reducer(new CountReducerFactory<>())
+                    .submit(new OrderByCollator<>(false,false));
             List<Entry<String,Long>> response = future.get();
             for(Map.Entry<String,Long> entry : response){
                 System.out.println(entry.getKey() + "\t\t" + entry.getValue());

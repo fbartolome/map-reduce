@@ -35,10 +35,10 @@ public class Person implements Serializable{
         return provinceName;
     }
 
-<<<<<<< HEAD
     public String getRegion() {
         return region;
-=======
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -55,6 +55,5 @@ public class Person implements Serializable{
     @Override
     public int hashCode() {
         return homeId;
->>>>>>> 61e6033... CSVReader tested and working
     }
 }
