@@ -13,3 +13,5 @@ tp/client/target/
 tp/server/target/
 
 *.class
+
+*.gz

@@ -16,6 +16,7 @@ import com.hazelcast.mapreduce.KeyValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -28,11 +29,13 @@ public class Client {
 
         logger.info("hazelcast Client Starting ...");
         final ClientConfig ccfg = new ClientConfig();
-        //TODO poner bien address
-        //10.17.65.164
-        ccfg.addAddress("127.0.0.1:5701");
-        final HazelcastInstance client = HazelcastClient.newHazelcastClient(ccfg);
 
+        //TODO deshardocdear esta lista
+        List<String> addresses = new ArrayList<>();
+        addresses.add("10.17.65.164:5701");
+        addresses.add("127.0.0.1:5701");
+        ccfg.getNetworkConfig().setAddresses(addresses);
+        final HazelcastInstance client = HazelcastClient.newHazelcastClient(ccfg);
 
         IMap<Long,Person> map = client.getMap("people");
         Long count = new Long(0);
@@ -44,6 +47,8 @@ public class Client {
         map.put(count++, new Person(ActivityCondition.UNEMPLOYED,1,"Hola","Catamarca"));
         map.put(count++, new Person(ActivityCondition.UNEMPLOYED,1,"Hola","Buenos Aires"));
         map.put(count++, new Person(ActivityCondition.UNEMPLOYED,1,"Hola","Neuquén"));
+
+
 
         JobTracker jobTracker = client.getJobTracker("tracker");
         Job<Long,Person> job = jobTracker.newJob(KeyValueSource.fromMap(map));
