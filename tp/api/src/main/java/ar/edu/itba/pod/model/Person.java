@@ -15,8 +15,8 @@ public class Person implements Serializable{
         this.activityCondition = activityCondition;
         this.homeId = homeId;
         this.departmentName = departmentName;
-        this.provinceName = provinceName;
-        this.region = Regions.getRegion(provinceName);
+        this.provinceName = provinceName.toLowerCase();
+        this.region = Regions.getRegion(this.provinceName);
     }
 
     public ActivityCondition getActivityCondition() {

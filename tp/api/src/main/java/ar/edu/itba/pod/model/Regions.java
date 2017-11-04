@@ -1,7 +1,9 @@
 package ar.edu.itba.pod.model;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class Regions {
 
@@ -42,11 +44,25 @@ public class Regions {
     if(regions == null){
       initiateMap();
     }
-    String ret = regions.get(province.toLowerCase());
+    String ret = regions.get(province);
     if(ret == null){
       throw new IllegalArgumentException(province + " is not a valid province");
     }
     return ret;
+  }
+
+  public static final Set<String> getProvinces(){
+    if(regions == null){
+      initiateMap();
+    }
+    return regions.keySet();
+  }
+
+  public static final Collection<String> getRegions(){
+    if(regions == null){
+      initiateMap();
+    }
+    return regions.values();
   }
 
 }

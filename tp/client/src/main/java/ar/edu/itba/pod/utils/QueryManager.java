@@ -29,14 +29,14 @@ public class QueryManager {
         writer.flush();
     }
 
-    static public class FirstQuery implements Query<List<Entry<String,Long>>> {
+    static public class FirstQuery implements Query<Long,Person,List<Entry<String,Long>>> {
 
         @Override
         public ICompletableFuture<List<Entry<String, Long>>> getFuture(Job<Long, Person> job) {
             return job
                     .mapper(new InhabitantsByRegionMapper())
                     .reducer(new CountReducerFactory<>())
-                    .submit(new OrderByCollator(false, false));
+                    .submit(new OrderByCollator(true, false));
         }
 
         @Override
@@ -45,7 +45,7 @@ public class QueryManager {
         }
     }
 
-    static public class SecondQuery implements Query<List<Entry<String,Long>>> {
+    static public class SecondQuery implements Query<Long,Person,List<Entry<String,Long>>> {
 
         private int n;
         private String prov;
@@ -70,7 +70,7 @@ public class QueryManager {
         }
     }
 
-    static public class ThirdQuery implements Query<List<Entry<String,Double>>> {
+    static public class ThirdQuery implements Query<Long,Person,List<Entry<String,Double>>> {
 
         @Override
         public ICompletableFuture<List<Entry<String, Double>>> getFuture(Job<Long, Person> job) {
@@ -86,7 +86,7 @@ public class QueryManager {
         }
     }
 
-    static public class FourthQuery implements Query<List<Entry<String,Long>>> {
+    static public class FourthQuery implements Query<Long,Person,List<Entry<String,Long>>> {
 
         @Override
         public ICompletableFuture<List<Entry<String, Long>>> getFuture(Job<Long, Person> job) {
@@ -102,7 +102,7 @@ public class QueryManager {
         }
     }
 
-    static public class FifthQuery implements Query<List<Entry<String,Double>>> {
+    static public class FifthQuery implements Query<Long,Person,List<Entry<String,Double>>> {
 
         @Override
         public ICompletableFuture<List<Entry<String, Double>>> getFuture(Job<Long, Person> job) {
@@ -118,7 +118,7 @@ public class QueryManager {
         }
     }
 
-    static public class SixthQuery implements Query<List<Entry<String,Integer>>> {
+    static public class SixthQuery implements Query<Long,Person,List<Entry<String,Integer>>> {
         private int n;
 
         public SixthQuery(int n) {
@@ -139,7 +139,7 @@ public class QueryManager {
         }
     }
 
-    static public class SeventhQuery implements Query<List<Entry<String,Double>>> {
+    static public class SeventhQuery implements Query<String,String,List<Entry<String,Integer>>> {
         private int n;
 
         public SeventhQuery(int n) {
@@ -147,19 +147,16 @@ public class QueryManager {
         }
 
         @Override
-        public ICompletableFuture<List<Entry<String, Double>>> getFuture(Job<Long, Person> job) {
-            // TODO
-            return null;
-//            return job
-//                    .keyPredicate(new ActivityConditionKeyPredicate("people"))
-//                    .mapper(new UnemploymentIndexByRegionMapper())
-//                    .reducer(new UnemploymentByRegionReducerFactory())
-//                    .submit(new OrderByCollator(false, false));
+        public ICompletableFuture<List<Entry<String, Integer>>> getFuture(Job<String, String> job) {
+            return job
+                .mapper(new MostSharingDeptsProvsMapper())
+                .reducer(new MostSharingDeptsProvsReducerFactory())
+                .submit(new TopAndOrderByCollator<>(n,true,true));
         }
 
         @Override
-        public void output(PrintWriter writer, List<Entry<String, Double>> response) {
-            //TODO
+        public void output(PrintWriter writer, List<Entry<String, Integer>> response) {
+            QueryManager.output(writer, response, QueryManager::defaultFormatter);
         }
     }
 

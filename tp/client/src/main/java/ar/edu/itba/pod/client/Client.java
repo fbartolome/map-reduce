@@ -2,10 +2,12 @@ package ar.edu.itba.pod.client;
 
 import ar.edu.itba.pod.model.Person;
 import ar.edu.itba.pod.utils.*;
+import ar.edu.itba.pod.utils.QueryManager.FifthQuery;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
+import com.hazelcast.core.MultiMap;
 import com.hazelcast.mapreduce.Job;
 import com.hazelcast.mapreduce.JobTracker;
 import com.hazelcast.mapreduce.KeyValueSource;
@@ -37,6 +39,7 @@ public class Client {
 
         final HazelcastInstance client = HazelcastClient.newHazelcastClient(ccfg);
 
+        //TODO: no necesariamente es un mapa
         IMap<Long,Person> map = client.getMap(mapName);
         final AtomicLong count = new AtomicLong(0);
 
@@ -47,7 +50,9 @@ public class Client {
 
 
         JobTracker jobTracker = client.getJobTracker("tracker");
+        //TODO: los jobs no se hacen siempre igual, hay que ponerlos en cada case
         Job<Long,Person> job = jobTracker.newJob(KeyValueSource.fromMap(map));
+        Job <String,String> job7 = null;
 
         try {
             PrintWriter writer = new PrintWriter(arguments.getOutPath(), "UTF-8");
@@ -79,12 +84,15 @@ public class Client {
                     break;
 
                 case 7:
-                    //TODO
-                    System.out.println("NO ESTA IMPLEMENTADO");
+                    final MultiMap<String,String> multiMap = client.getMultiMap(mapName);
+                    CSVReader.readCSV(arguments.getInputPath()).stream()
+                        .forEach(p -> multiMap.put(p.getProvinceName(),p.getDepartmentName()));
+                    query = new QueryManager.SeventhQuery(arguments.getAmount());
+                    job7 = jobTracker.newJob(KeyValueSource.fromMultiMap(multiMap));
                     break;
             }
 
-            query.output(writer, query.getFuture(job).get());
+            query.output(writer, query.getFuture(job7).get());
 
         }catch (IOException e) {
             System.err.println("There was an error writing the output " + e.getMessage());

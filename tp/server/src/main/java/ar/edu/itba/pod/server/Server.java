@@ -2,6 +2,7 @@ package ar.edu.itba.pod.server;
 
 import com.hazelcast.config.Config;
 import com.hazelcast.config.MapConfig;
+import com.hazelcast.config.MultiMapConfig;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import org.slf4j.Logger;
@@ -16,6 +17,7 @@ public class Server {
         Config config = new Config();
         config.setInstanceName("TPE-Cluster");
         config.addMapConfig(new MapConfig().setName("people"));
+        config.addMultiMapConfig(new MultiMapConfig().setName("people"));
 
         // Set minimum cluster size
         //config.setProperty("hazelcast.initial.min.cluster.size","2");
