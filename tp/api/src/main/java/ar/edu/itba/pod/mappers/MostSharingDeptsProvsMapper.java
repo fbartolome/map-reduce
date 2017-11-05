@@ -4,8 +4,9 @@ import com.hazelcast.mapreduce.Context;
 import com.hazelcast.mapreduce.Mapper;
 import java.util.LinkedList;
 import java.util.List;
+import javafx.util.Pair;
 
-public class MostSharingDeptsProvsMapper implements Mapper<String,String,String,String> {
+public class MostSharingDeptsProvsMapper implements Mapper<Long,Pair<String,String>,String,String> {
 
   private final List<String> provinces = new LinkedList<>();
 
@@ -36,8 +37,10 @@ public class MostSharingDeptsProvsMapper implements Mapper<String,String,String,
   }
 
   @Override
-  public void map(String province, String department, Context<String, String> context) {
+  public void map(Long aLong, Pair<String,String> pair, Context<String, String> context) {
     for (String p : provinces){
+      final String department = pair.getKey();
+      final String province = pair.getValue().toLowerCase();
       if(p.compareTo(province) != 0){
         String twoProvinces = p.compareTo(province) < 0 ?
             p + " + " + province : province + " + " + p;

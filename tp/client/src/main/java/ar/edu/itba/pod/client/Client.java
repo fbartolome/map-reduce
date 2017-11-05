@@ -9,6 +9,7 @@ import com.hazelcast.core.MultiMap;
 import com.hazelcast.mapreduce.Job;
 import com.hazelcast.mapreduce.JobTracker;
 import com.hazelcast.mapreduce.KeyValueSource;
+import javafx.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,16 +63,19 @@ public class Client {
             switch (arguments.getQueryNumber()) {
 
                 case 1:
-                    final IMap<Long,String> map = client.getMap(mapName);
-                    map.clear();
-                    Map<Long,String> otherMap = new HashMap();
-                    //TODO: change reading
+                    logger.info("Creating local map with data");
+                    final IMap<Long,String> map1 = client.getMap(mapName);
+                    map1.clear();
+                    Map<Long,String> query1Map = new HashMap();
                     CSVReader.getRegions(arguments.getInputPath()).stream()
-                        .forEach(r -> otherMap.put(count.getAndIncrement(),r));
-                    map.putAll(otherMap);
+                        .forEach(r -> query1Map.put(count.getAndIncrement(),r));
+                    logger.info("Start loading remote data");
+                    map1.putAll(query1Map);
+                    logger.info("Finished loading remote data");
                     query = new QueryManager.FirstQuery();
-                    Job <Long,String> job1 = jobTracker.newJob(KeyValueSource.fromMap(map));
+                    Job <Long,String> job1 = jobTracker.newJob(KeyValueSource.fromMap(map1));
                     query.output(writer, query.getFuture(job1).get());
+                    logger.info("Finished writing output");
                     break;
 
                 case 2:
@@ -81,6 +85,7 @@ public class Client {
                             .stream()
                             .forEach(d -> query2Map.put(count.getAndIncrement(), d));
                     IMap<Long,String> map2 = client.getMap("departments");
+                    map2.clear();
                     logger.info("Start loading remote data");
                     map2.putAll(query2Map);
                     logger.debug("map size " + map2.size());
@@ -108,13 +113,19 @@ public class Client {
                     break;
 
                 case 7:
-                    final MultiMap<String,String> multiMap = client.getMultiMap(mapName);
-                    multiMap.clear();
-                    CSVReader.getPeople(arguments.getInputPath()).stream()
-                        .forEach(p -> multiMap.put(p.getProvinceName(),p.getDepartmentName()));
+                    logger.info("Creating local map with data");
+                    final IMap<Long,Pair<String,String>> map7 = client.getMap(mapName);
+                    map7.clear();
+                    final Map<Long,Pair<String,String>> query7Map = new HashMap<>();
+                    CSVReader.getDepartmentsAndProvinces(arguments.getInputPath()).stream()
+                        .forEach(p -> query7Map.put(count.getAndIncrement(),p));
+                    logger.info("Start loading remote data");
+                    map7.putAll(query7Map);
+                    logger.info("Finished loading remote data");
                     query = new QueryManager.SeventhQuery(arguments.getAmount());
-                    Job <String,String> job7 = jobTracker.newJob(KeyValueSource.fromMultiMap(multiMap));
+                    Job <Long,Pair<String,String>> job7 = jobTracker.newJob(KeyValueSource.fromMap(map7));
                     query.output(writer, query.getFuture(job7).get());
+                    logger.info("Finished writing output");
                     break;
             }
 //            query.output(writer, query.getFuture(job7).get());

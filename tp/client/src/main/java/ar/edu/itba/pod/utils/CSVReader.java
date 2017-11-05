@@ -125,7 +125,7 @@ public class CSVReader {
     //First value of Pair is the department and the second one is the province.
     public static Collection<Pair<String, String>> getDepartmentsAndProvinces(String path){
         //read file into stream, try-with-resources
-        List<Pair<String, String>> query = new LinkedList<>();
+        Set<Pair<String, String>> query = new HashSet<>();
         Scanner filescanner = null;
         try {
             filescanner = new Scanner(new File(path));
