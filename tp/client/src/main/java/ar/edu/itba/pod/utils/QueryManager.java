@@ -4,6 +4,7 @@ import ar.edu.itba.pod.collators.MinAmountAndOrderCollator;
 import ar.edu.itba.pod.collators.OrderByCollator;
 import ar.edu.itba.pod.collators.TopAndOrderByCollator;
 import ar.edu.itba.pod.mappers.*;
+import ar.edu.itba.pod.model.ActivityCondition;
 import ar.edu.itba.pod.model.Person;
 import ar.edu.itba.pod.reducers.*;
 import com.hazelcast.core.ICompletableFuture;
@@ -75,10 +76,10 @@ public class QueryManager {
         }
     }
 
-    static public class ThirdQuery implements Query<Long,Person,List<Entry<String,Double>>> {
+    static public class ThirdQuery implements Query<Long, Pair<ActivityCondition, String>,List<Entry<String,Double>>> {
 
         @Override
-        public ICompletableFuture<List<Entry<String, Double>>> getFuture(Job<Long, Person> job) {
+        public ICompletableFuture<List<Entry<String, Double>>> getFuture(Job<Long, Pair<ActivityCondition, String>> job) {
             return job
                     .mapper(new UnemploymentIndexByRegionMapper())
                     .reducer(new UnemploymentByRegionReducerFactory())

@@ -1,5 +1,6 @@
 package ar.edu.itba.pod.client;
 
+import ar.edu.itba.pod.model.ActivityCondition;
 import ar.edu.itba.pod.utils.*;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.client.config.ClientConfig;
@@ -31,13 +32,7 @@ public class Client {
         CLIParser cli = new CLIParser(args);
         ConsoleArguments arguments = cli.parse();
         final ClientConfig ccfg = new ClientConfig();
-        List<String> addresses = new ArrayList<>();
-
-        //TODO sacar esto hardcodeado
-        addresses.add("127.0.0.1");
-//        addresses.add("10.2.69.200");
-        ccfg.getNetworkConfig().setAddresses(addresses);
-//        ccfg.getNetworkConfig().setAddresses(Arrays.asList(arguments.getIps()));
+        ccfg.getNetworkConfig().setAddresses(Arrays.asList(arguments.getIps()));
 
         //TODO sacar este print, usado para debugging
         Arrays.asList(arguments.getIps()).stream().forEach(i -> System.out.println(i));
@@ -88,7 +83,6 @@ public class Client {
                     map2.clear();
                     logger.info("Start loading remote data");
                     map2.putAll(query2Map);
-                    logger.debug("map size " + map2.size());
                     logger.info("Finished loading remote data");
                     Job<Long, String> job2 = jobTracker.newJob(KeyValueSource.fromMap(map2));
                     query = new QueryManager.SecondQuery(arguments.getAmount(), arguments.getProvince());
@@ -97,7 +91,19 @@ public class Client {
                     break;
 
                 case 3:
+                    logger.info("Creating local map with data");
+                    HashMap<Long, Pair<ActivityCondition, String>> auxMap = new HashMap<>();
+                    CSVReader.getConditionByRegion(arguments.getInputPath())
+                            .stream()
+                            .forEach(p -> auxMap.put(count.getAndIncrement(), p));
+                    IMap<Long, Pair<ActivityCondition, String>> map3 = client.getMap("activityConditions");
+                    logger.info("Start loading remote data");
+                    map3.putAll(auxMap);
+                    logger.info("Finished loading remote data");
+                    Job<Long, Pair<ActivityCondition, String>> job3 = jobTracker.newJob(KeyValueSource.fromMap(map3));
                     query = new QueryManager.ThirdQuery();
+                    query.output(writer, query.getFuture(job3).get());
+                    logger.info("Finished writing output");
                     break;
 
                 case 4:
