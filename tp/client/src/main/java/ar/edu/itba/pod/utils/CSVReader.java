@@ -118,4 +118,26 @@ public class CSVReader {
         }
         return collection;
     }
+
+
+    //First value of Pair is the department and the second one is the province.
+    public static Collection<Pair<String, String>> getDepartmentsAndProvinces(String path){
+        //read file into stream, try-with-resources
+        List<Pair<String, String>> query = new LinkedList<>();
+        Scanner filescanner = null;
+        try {
+            filescanner = new Scanner(new File(path));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        String line;
+        while(filescanner.hasNext()){
+            line = filescanner.nextLine();
+            Scanner lineScanner = new Scanner(line).useDelimiter(",");
+            lineScanner.next();
+            lineScanner.next();
+            query.add(new Pair<>(lineScanner.next(), lineScanner.next()));
+        }
+        return query;
+    }
 }
