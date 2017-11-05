@@ -31,7 +31,7 @@ public class Server {
                     .setInterfaces(new InterfacesConfig()
                         .setEnabled(true)
                         //TODO desharcodear
-                        .addInterface("10.2.71.*"))
+                        .addInterface("10.2.*.*"))
                         )
 
                 .setInstanceName("TPE-Cluster")
