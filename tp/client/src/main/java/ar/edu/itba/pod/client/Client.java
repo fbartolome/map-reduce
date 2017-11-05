@@ -18,7 +18,9 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -31,29 +33,16 @@ public class Client {
 
         logger.info("hazelcast Client Starting ...");
 
-
         CLIParser cli = new CLIParser(args);
         ConsoleArguments arguments = cli.parse();
+
         final ClientConfig ccfg = new ClientConfig();
         ccfg.getNetworkConfig().setAddresses(Arrays.asList(arguments.getIps()));
-
-        //TODO sacar este print, usado para debugging
-        Arrays.asList(arguments.getIps()).stream().forEach(i -> System.out.println(i));
-
         final HazelcastInstance client = HazelcastClient.newHazelcastClient(ccfg);
 
-        //TODO: no necesariamente es un mapa
-//        IMap<Long,Person> map = client.getMap(mapName);
         final AtomicLong count = new AtomicLong(0);
 
-        //"./client/src/main/resources/census100.csv"
-//        CSVReader.readCSV(arguments.getInputPath()).stream().forEach(p -> map.put(count.getAndIncrement(), p));
-
-
         JobTracker jobTracker = client.getJobTracker("tracker");
-        //TODO: los jobs no se hacen siempre igual, hay que ponerlos en cada case
-//        Job<Long,Person> job = jobTracker.newJob(KeyValueSource.fromMap(map));
-//        Job <String,String> job7 = null;
 
         Stopwatch timer = Stopwatch.createUnstarted();
         try {
@@ -137,7 +126,20 @@ public class Client {
                     break;
 
                 case 6:
+                    logger.info("Creating local map with data");
+                    HashMap<Long, Pair<String, String>> auxMap6 = new HashMap<>();
+                    CSVReader.getDepartmentsAndProvinces(arguments.getInputPath())
+                            .stream()
+                            .forEach(p -> auxMap6.put(count.getAndIncrement(), p));
+                    IMap<Long, Pair<String, String>> map6 = client.getMap("dept");
+                    logger.info("Start loading remote data");
+                    map6.putAll(auxMap6);
+                    logger.info("Finished loading remote data");
+                    Job<Long, Pair<String, String>> job6 = jobTracker.newJob(KeyValueSource.fromMap(map6));
                     query = new QueryManager.SixthQuery(arguments.getAmount());
+                    logger.debug("anda");
+                    query.output(writer, query.getFuture(job6).get());
+                    logger.info("Finished writing output");
                     break;
 
                 case 7:
