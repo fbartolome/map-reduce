@@ -45,8 +45,8 @@ public class QueryManager {
         public ICompletableFuture<List<Entry<Character, Long>>> getFuture(Job<Long, Character> job) {
             logger.debug("getFuture in first Query");
             return job
-                    .mapper(new UnitMapper<>())
-                    .reducer(new CountReducerFactory<>())
+                    .mapper(new UnitMapper())
+                    .reducer(new CountReducerFactory())
                     .submit(new OrderByCollator(false, false));
         }
 
@@ -70,9 +70,9 @@ public class QueryManager {
         @Override
         public ICompletableFuture<List<Entry<String, Long>>> getFuture(Job<Long, String> job) {
             return job
-                    .mapper(new UnitMapper<>())
-                    .reducer(new CountReducerFactory<>())
-                    .submit(new TopAndOrderByCollator<>(n, false, false));
+                    .mapper(new UnitMapper())
+                    .reducer(new CountReducerFactory())
+                    .submit(new TopAndOrderByCollator(n, false, false));
         }
 
         @Override
@@ -86,7 +86,7 @@ public class QueryManager {
         @Override
         public ICompletableFuture<List<Entry<String, Double>>> getFuture(Job<Long, Pair<String, ActivityCondition>> job) {
             return job
-                    .mapper(new KeyValueMapper<>())
+                    .mapper(new KeyValueMapper())
                     .reducer(new UnemploymentByRegionReducerFactory())
                     .submit(new OrderByCollator(false, false));
         }
@@ -102,7 +102,7 @@ public class QueryManager {
         @Override
         public ICompletableFuture<List<Entry<String, Long>>> getFuture(Job<Integer, String> job) {
             return job
-                    .mapper(new UnitMapper<>())
+                    .mapper(new UnitMapper())
                     .reducer(new CountReducerFactory())
                     .submit(new OrderByCollator(false, false));
         }
@@ -118,7 +118,7 @@ public class QueryManager {
         @Override
         public ICompletableFuture<List<Entry<String, Double>>> getFuture(Job<Long,Pair<String,Integer>> job) {
             return job
-                    .mapper(new KeyValueMapper<>())
+                    .mapper(new KeyValueMapper())
                     .reducer(new InhabitantsPerHouseholdByRegionReducerFactory())
                     .submit(new OrderByCollator(false, false));
         }
@@ -139,8 +139,8 @@ public class QueryManager {
         @Override
         public ICompletableFuture<List<Entry<String, Integer>>> getFuture(Job<Long, Pair<String, String>> job) {
             return job
-                    .mapper(new KeyValueMapper<>())
-                    .reducer(new CountReducerFactory<>())
+                    .mapper(new KeyValueMapper())
+                    .reducer(new CountReducerFactory())
                     .submit(new MinAmountAndOrderCollator(false, false, n));
         }
 
@@ -161,7 +161,7 @@ public class QueryManager {
         @Override
         public ICompletableFuture<List<Entry<String, Integer>>> getFuture(Job<Long,Pair<String,String>> job) {
             return job
-                .mapper(new KeyValueMapper<>())
+                .mapper(new KeyValueMapper())
                 .reducer(new MostSharingDeptsProvsReducerFactory())
                 .submit(new MinAmountAndOrderCollator(false,false,n));
         }
