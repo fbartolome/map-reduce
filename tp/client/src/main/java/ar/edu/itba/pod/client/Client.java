@@ -35,9 +35,6 @@ public class Client {
         final ClientConfig ccfg = new ClientConfig();
         ccfg.getNetworkConfig().setAddresses(Arrays.asList(arguments.getIps()));
 
-        //TODO sacar este print, usado para debugging
-        Arrays.asList(arguments.getIps()).stream().forEach(i -> System.out.println(i));
-
         final HazelcastInstance client = HazelcastClient.newHazelcastClient(ccfg);
 
         //TODO: no necesariamente es un mapa
