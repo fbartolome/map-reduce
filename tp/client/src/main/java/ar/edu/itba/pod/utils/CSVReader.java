@@ -1,13 +1,11 @@
 package ar.edu.itba.pod.utils;
 
-import ar.edu.itba.pod.model.ActivityCondition;
-import ar.edu.itba.pod.model.Person;
-import ar.edu.itba.pod.model.RegionMapper;
+import ar.edu.itba.pod.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ar.edu.itba.pod.model.Regions;
 import javafx.util.Pair;
 
+import javax.swing.plaf.synth.Region;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.atomic.LongAdder;
@@ -67,9 +65,9 @@ public class CSVReader {
         return regions;
     }
 
-    public static Map<Long, Pair<String, ActivityCondition>> getConditionByRegion(String path) {
+    public static Map<Long, Pair<Character, ActivityCondition>> getConditionByRegion(String path) {
         logger.info("Start reading from CSV ...");
-        Map<Long, Pair<String, ActivityCondition>> query = new HashMap<>();
+        Map<Long, Pair<Character, ActivityCondition>> query = new HashMap<>();
         try {
             try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
                 LongAdder lineCounter = new LongAdder();
@@ -78,8 +76,8 @@ public class CSVReader {
                     lineCounter.increment();
                     query.put(lineCounter.longValue(),
                             new Pair(
-                                    ActivityCondition.values()[Integer.valueOf(lineParts[0])],
-                                    Regions.getRegion(lineParts[3])
+                                    RegionMapper.getKey(Regions.getRegion(lineParts[3])),
+                                    ActivityCondition.values()[Integer.valueOf(lineParts[0])]
                             )
                     );
                 });
@@ -92,15 +90,15 @@ public class CSVReader {
         return query;
     }
 
-    public static Map<String, Integer> getHomesByHomeKey(String path){
+    public static Map<Character, Integer> getHomesByHomeKey(String path){
         //read file into stream, try-with-resources
         logger.info("Start reading from CSV ...");
-        Map<String, Integer> query = new HashMap<>();
+        Map<Character, Integer> query = new HashMap<>();
         try {
             try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
                 reader.lines().forEach(line -> {
                     String[] lineParts = line.split(",");
-                    query.put(Regions.getRegion(lineParts[3]),Integer.valueOf(lineParts[1]));
+                    query.put(RegionMapper.getKey(Regions.getRegion(lineParts[3])),Integer.valueOf(lineParts[1]));
                 });
             }
 
@@ -111,10 +109,10 @@ public class CSVReader {
         return query;
     }
 
-    public static Map<Long, Pair<String, Integer>> getHomesByRegionRawData(String path){
+    public static Map<Long, Pair<Character, Integer>> getHomesByRegionRawData(String path){
         //read file into stream, try-with-resources
         logger.info("Start reading from CSV ...");
-        Map<Long, Pair<String, Integer>> query = new HashMap<>();
+        Map<Long, Pair<Character, Integer>> query = new HashMap<>();
         try {
             try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
                 LongAdder lineCounter = new LongAdder();
@@ -123,7 +121,7 @@ public class CSVReader {
                     lineCounter.increment();
                     query.put(lineCounter.longValue(),
                             new Pair(
-                                    Regions.getRegion(lineParts[3]),
+                                    RegionMapper.getKey(Regions.getRegion(lineParts[3])),
                                     Integer.valueOf(lineParts[1])
                             )
                     );
@@ -138,17 +136,17 @@ public class CSVReader {
     }
 
 
-    public static Map<Long, Pair<String, Integer>> getHomesByRegionLocalFilter(String path){
+    public static Map<Long, Pair<Character, Integer>> getHomesByRegionLocalFilter(String path){
         //read file into stream, try-with-resources
         logger.info("Start reading from CSV ...");
-        Set<Pair<String, Integer>> set = new HashSet<>();
+        Set<Pair<Character, Integer>> set = new HashSet<>();
         try {
             try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
                 reader.lines().forEach(line -> {
                     String[] lineParts = line.split(",");
                     set.add(
                             new Pair(
-                                    Regions.getRegion(lineParts[3]),
+                                    RegionMapper.getKey(Regions.getRegion(lineParts[3])),
                                     Integer.valueOf(lineParts[1])
                             )
                     );
@@ -158,7 +156,7 @@ public class CSVReader {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Map<Long, Pair<String, Integer>> query = new HashMap<>();
+        Map<Long, Pair<Character, Integer>> query = new HashMap<>();
         LongAdder lineCounter = new LongAdder();
         set.stream().forEach(p -> {
                 query.put(lineCounter.longValue(), p);
@@ -171,10 +169,10 @@ public class CSVReader {
     }
 
     //First value of Pair is the department and the second one is the province.
-    public static Map<Long, Pair<String, String>> getDepartmentsAndProvinces(String path){
+    public static Map<Long, Pair<String, Character>> getDepartmentsAndProvinces(String path){
         //read file into stream, try-with-resources
         logger.info("Start reading from CSV ...");
-        Set<Pair<String, String>> set = new HashSet<>();
+        Set<Pair<String, Character>> set = new HashSet<>();
         try {
             try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
                 reader.lines().forEach(line -> {
@@ -182,7 +180,7 @@ public class CSVReader {
                     set.add(
                             new Pair(
                                     lineParts[2],
-                                    lineParts[3]
+                                    ProvinceMapper.getKey(lineParts[3])
                             )
                     );
                 });
@@ -191,7 +189,7 @@ public class CSVReader {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Map<Long, Pair<String, String>> query = new HashMap<>();
+        Map<Long, Pair<String, Character>> query = new HashMap<>();
         LongAdder lineCounter = new LongAdder();
         set.stream().forEach(p -> {
                     query.put(lineCounter.longValue(), p);

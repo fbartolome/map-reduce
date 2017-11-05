@@ -1,0 +1,5 @@
+Región Buenos Aires,47
+Región del Norte Grande Argentino,24
+Región Centro,19
+Región Patagónica,7
+Región del Nuevo Cuyo,3
