@@ -10,6 +10,8 @@ import ar.edu.itba.pod.model.Person;
 import ar.edu.itba.pod.reducers.*;
 import com.hazelcast.core.ICompletableFuture;
 import com.hazelcast.mapreduce.Job;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.PrintWriter;
 import java.util.List;
@@ -17,6 +19,8 @@ import java.util.Map.Entry;
 import java.util.function.Function;
 
 public class QueryManager {
+
+    private static Logger logger = LoggerFactory.getLogger(QueryManager.class);
 
     private static <T,U> String defaultFormatter(Entry<T,U> e) {
         return e.getKey() + "," + e.getValue() + "\n";
@@ -33,6 +37,7 @@ public class QueryManager {
 
         @Override
         public ICompletableFuture<List<Entry<String, Long>>> getFuture(Job<Long, Person> job) {
+            logger.debug("getFuture in first Query");
             return job
                     .mapper(new InhabitantsByRegionMapper())
                     .reducer(new CountReducerFactory<>())
@@ -41,6 +46,7 @@ public class QueryManager {
 
         @Override
         public void output(PrintWriter writer, List<Entry<String, Long>> response) {
+            logger.debug("output first query");
             QueryManager.output(writer, response, QueryManager::defaultFormatter);
         }
     }
