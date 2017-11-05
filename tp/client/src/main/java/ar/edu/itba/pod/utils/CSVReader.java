@@ -18,7 +18,7 @@ public class CSVReader {
     //not tested yet
     public static Collection<Person> getPeople(String path){
         //read file into stream, try-with-resources
-            logger.info("Start reading from CSV ...");
+        logger.info("Start reading from CSV ...");
         List<Person> people = new LinkedList<>();
         Scanner filescanner = null;
         try {

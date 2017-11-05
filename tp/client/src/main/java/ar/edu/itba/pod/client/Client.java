@@ -7,7 +7,6 @@ import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
-import com.hazelcast.core.MultiMap;
 import com.hazelcast.mapreduce.Job;
 import com.hazelcast.mapreduce.JobTracker;
 import com.hazelcast.mapreduce.KeyValueSource;
@@ -15,6 +14,8 @@ import javafx.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
@@ -27,6 +28,7 @@ public class Client {
     public static String mapName = "people";
 
     public static void main(String[] args) {
+
         logger.info("hazelcast Client Starting ...");
 
 
@@ -55,6 +57,11 @@ public class Client {
 
         Stopwatch timer = Stopwatch.createUnstarted();
         try {
+            //TODO Add parameter file path.
+            FileWriter fw = new FileWriter("myfile.txt", true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            PrintWriter timerFile = new PrintWriter(bw);
+
             PrintWriter writer = new PrintWriter(arguments.getOutPath(), "UTF-8");
             Query query = null;
             switch (arguments.getQueryNumber()) {
@@ -67,7 +74,7 @@ public class Client {
                     timer.start();
                     CSVReader.getRegions(arguments.getInputPath()).stream()
                         .forEach(r -> query1Map.put(count.getAndIncrement(),r));
-                    logger.info("Reading data took: " + timer);
+                    timerFile.append("Reading data took: " + timer).println();
                     timer.stop().reset();
                     timer.start();
                     logger.info("Start loading remote data");
@@ -76,7 +83,7 @@ public class Client {
                     query = new QueryManager.FirstQuery();
                     Job <Long,String> job1 = jobTracker.newJob(KeyValueSource.fromMap(map1));
                     query.output(writer, query.getFuture(job1).get());
-                    logger.info("The query took: " + timer);
+                    timerFile.append("Query" + arguments.getQueryNumber() + " took: " + timer).println();
                     timer.stop().reset();
                     logger.info("Finished writing output");
                     break;
@@ -92,7 +99,7 @@ public class Client {
                     map2.clear();
                     logger.info("Start loading remote data");
                     map2.putAll(query2Map);
-                    logger.info("Reading data took: " + timer);
+                    timerFile.append("Reading data took: " + timer).println();
                     timer.stop().reset();
                     timer.start();
                     logger.debug("map size " + map2.size());
@@ -100,7 +107,7 @@ public class Client {
                     Job<Long, String> job2 = jobTracker.newJob(KeyValueSource.fromMap(map2));
                     query = new QueryManager.SecondQuery(arguments.getAmount(), arguments.getProvince());
                     query.output(writer, query.getFuture(job2).get());
-                    logger.info("The query took: " + timer);
+                    timerFile.append("Query" + arguments.getQueryNumber() + " took: " + timer).println();
                     timer.stop().reset();
                     logger.info("Finished writing output");
                     break;
@@ -141,7 +148,7 @@ public class Client {
                     timer.start();
                     CSVReader.getDepartmentsAndProvinces(arguments.getInputPath()).stream()
                         .forEach(p -> query7Map.put(count.getAndIncrement(),p));
-                    logger.info("Reading data took: " + timer);
+                    timerFile.append("Reading data took: " + timer).println();
                     timer.stop().reset();
                     timer.start();
                     logger.info("Start loading remote data");
@@ -150,11 +157,12 @@ public class Client {
                     query = new QueryManager.SeventhQuery(arguments.getAmount());
                     Job <Long,Pair<String,String>> job7 = jobTracker.newJob(KeyValueSource.fromMap(map7));
                     query.output(writer, query.getFuture(job7).get());
-                    logger.info("The query took: " + timer);
+                    timerFile.append("Query" + arguments.getQueryNumber() + " took: " + timer).println();
                     timer.stop().reset();
                     logger.info("Finished writing output");
                     break;
             }
+            timerFile.close();
 //            query.output(writer, query.getFuture(job7).get());
 
         }catch (IOException e) {
