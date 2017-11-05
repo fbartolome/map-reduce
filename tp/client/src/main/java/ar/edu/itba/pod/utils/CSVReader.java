@@ -40,6 +40,7 @@ public class CSVReader {
 
     public static Collection<String> getRegions(String path){
         //read file into stream, try-with-resources
+        logger.info("Start reading from CSV ...");
         List<String> regions = new LinkedList<>();
         Scanner filescanner = null;
         try {
@@ -56,6 +57,7 @@ public class CSVReader {
             lineScanner.next();
             regions.add(Regions.getRegion(lineScanner.next()));
         }
+        logger.info("Finished reading from CSV ...");
         return regions;
     }
 

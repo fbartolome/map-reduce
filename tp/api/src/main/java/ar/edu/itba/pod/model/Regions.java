@@ -44,7 +44,7 @@ public class Regions {
     if(regions == null){
       initiateMap();
     }
-    String ret = regions.get(province);
+    String ret = regions.get(province.toLowerCase());
     if(ret == null){
       throw new IllegalArgumentException(province + " is not a valid province");
     }

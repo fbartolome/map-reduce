@@ -76,8 +76,8 @@ public class Client {
                     map.clear();
                     Map<Long,String> otherMap = new HashMap();
                     //TODO: change reading
-                    CSVReader.readCSV(arguments.getInputPath()).stream()
-                        .forEach(p -> otherMap.put(count.getAndIncrement(),p.getRegion()));
+                    CSVReader.getRegions(arguments.getInputPath()).stream()
+                        .forEach(r -> otherMap.put(count.getAndIncrement(),r));
                     map.putAll(otherMap);
                     query = new QueryManager.FirstQuery();
                     Job <Long,String> job1 = jobTracker.newJob(KeyValueSource.fromMap(map));
@@ -105,14 +105,14 @@ public class Client {
                     break;
 
                 case 7:
-                    final MultiMap<String,String> multiMap = client.getMultiMap(mapName);
-                    multiMap.clear();
-                    CSVReader.readCSV(arguments.getInputPath()).stream()
-                        .forEach(p -> multiMap.put(p.getProvinceName(),p.getDepartmentName()));
-                    query = new QueryManager.SeventhQuery(arguments.getAmount());
-                    Job <String,String> job7 = jobTracker.newJob(KeyValueSource.fromMultiMap(multiMap));
-                    query.output(writer, query.getFuture(job7).get());
-                    break;
+//                    final MultiMap<String,String> multiMap = client.getMultiMap(mapName);
+//                    multiMap.clear();
+//                    CSVReader.readCSV(arguments.getInputPath()).stream()
+//                        .forEach(p -> multiMap.put(p.getProvinceName(),p.getDepartmentName()));
+//                    query = new QueryManager.SeventhQuery(arguments.getAmount());
+//                    Job <String,String> job7 = jobTracker.newJob(KeyValueSource.fromMultiMap(multiMap));
+//                    query.output(writer, query.getFuture(job7).get());
+//                    break;
             }
 //            query.output(writer, query.getFuture(job7).get());
 
