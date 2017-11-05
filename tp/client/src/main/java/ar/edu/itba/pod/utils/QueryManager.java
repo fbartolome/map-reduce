@@ -145,7 +145,7 @@ public class QueryManager {
         }
     }
 
-    static public class SeventhQuery implements Query<String,String,List<Entry<String,Integer>>> {
+    static public class SeventhQuery implements Query<Long,Pair<String,String>,List<Entry<String,Integer>>> {
         private int n;
 
         public SeventhQuery(int n) {
@@ -153,11 +153,11 @@ public class QueryManager {
         }
 
         @Override
-        public ICompletableFuture<List<Entry<String, Integer>>> getFuture(Job<String, String> job) {
+        public ICompletableFuture<List<Entry<String, Integer>>> getFuture(Job<Long,Pair<String,String>> job) {
             return job
                 .mapper(new MostSharingDeptsProvsMapper())
                 .reducer(new MostSharingDeptsProvsReducerFactory())
-                .submit(new TopAndOrderByCollator<>(n,true,true));
+                .submit(new MinAmountAndOrderCollator(false,false,n));
         }
 
         @Override
