@@ -2,6 +2,7 @@ package ar.edu.itba.pod.utils;
 
 import ar.edu.itba.pod.model.ActivityCondition;
 import ar.edu.itba.pod.model.Person;
+import ar.edu.itba.pod.model.RegionMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ar.edu.itba.pod.model.Regions;
@@ -43,10 +44,10 @@ public class CSVReader {
         return people;
     }
 
-    public static Map<Long,String> getRegions(String path){
+    public static Map<Long,Character> getRegions(String path){
         //read file into stream, try-with-resources
         logger.info("Start reading from CSV ...");
-        Map<Long,String> regions = new HashMap<>();
+        Map<Long,Character> regions = new HashMap<>();
 
         try {
             try(BufferedReader reader = new BufferedReader(new FileReader(path))) {
@@ -55,7 +56,7 @@ public class CSVReader {
                     String[] lineParts = line.split(",");
                     lineCounter.increment();
                     regions.put(lineCounter.longValue(),
-                            Regions.getRegion(lineParts[3]));
+                            RegionMapper.getKey(Regions.getRegion(lineParts[3])));
                 });
             }
 

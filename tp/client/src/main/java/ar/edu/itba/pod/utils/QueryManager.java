@@ -6,6 +6,7 @@ import ar.edu.itba.pod.collators.TopAndOrderByCollator;
 import ar.edu.itba.pod.mappers.*;
 import ar.edu.itba.pod.model.ActivityCondition;
 import ar.edu.itba.pod.model.Person;
+import ar.edu.itba.pod.model.RegionMapper;
 import ar.edu.itba.pod.reducers.*;
 import com.hazelcast.core.ICompletableFuture;
 import com.hazelcast.mapreduce.Job;
@@ -13,6 +14,7 @@ import javafx.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.plaf.synth.Region;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map.Entry;
@@ -26,6 +28,10 @@ public class QueryManager {
         return e.getKey() + "," + e.getValue() + "\n";
     }
 
+    private static <T,U> String regionFommater(Entry<T,U> e) {
+        return RegionMapper.getRegion((Character)e.getKey()) + "," + e.getValue() + "\n";
+    }
+
     private static <T,U> void output(PrintWriter writer, List<Entry<T,U>> response, Function<Entry<T,U>, String> formatter) {
         for (Entry<T, U> entry : response) {
             writer.write(formatter.apply(entry));
@@ -33,10 +39,10 @@ public class QueryManager {
         writer.flush();
     }
 
-    static public class FirstQuery implements Query<Long,String,List<Entry<String,Long>>> {
+    static public class FirstQuery implements Query<Long,Character,List<Entry<Character,Long>>> {
 
         @Override
-        public ICompletableFuture<List<Entry<String, Long>>> getFuture(Job<Long, String> job) {
+        public ICompletableFuture<List<Entry<Character, Long>>> getFuture(Job<Long, Character> job) {
             logger.debug("getFuture in first Query");
             return job
                     .mapper(new InhabitantsByRegionMapper())
@@ -45,9 +51,9 @@ public class QueryManager {
         }
 
         @Override
-        public void output(PrintWriter writer, List<Entry<String, Long>> response) {
+        public void output(PrintWriter writer, List<Entry<Character, Long>> response) {
             logger.debug("output first query");
-            QueryManager.output(writer, response, QueryManager::defaultFormatter);
+            QueryManager.output(writer, response, QueryManager::regionFommater);
         }
     }
 

@@ -57,10 +57,10 @@ public class Client {
 
                 case 1:
                     logger.info("Creating local map with data");
-                    final IMap<Long,String> map1 = client.getMap(mapName);
+                    final IMap<Long,Character> map1 = client.getMap(mapName);
                     map1.clear();
                     timer.start();
-                    Map<Long,String> query1Map = CSVReader.getRegions(arguments.getInputPath());
+                    Map<Long,Character> query1Map = CSVReader.getRegions(arguments.getInputPath());
                     timerFile.append("Reading data took: " + timer).println();
                     timer.stop().reset();
                     timer.start();
@@ -68,7 +68,7 @@ public class Client {
                     map1.putAll(query1Map);
                     logger.info("Finished loading remote data");
                     query = new QueryManager.FirstQuery();
-                    Job <Long,String> job1 = jobTracker.newJob(KeyValueSource.fromMap(map1));
+                    Job <Long,Character> job1 = jobTracker.newJob(KeyValueSource.fromMap(map1));
                     query.output(writer, query.getFuture(job1).get());
                     timerFile.append("Query" + arguments.getQueryNumber() + " took: " + timer).println();
                     timer.stop().reset();
