@@ -15,3 +15,7 @@ tp/server/target/
 *.class
 
 *.gz
+
+tp/myfile\.txt
+
+tp/client/src/main/resources/out\.txt

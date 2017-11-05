@@ -16,7 +16,7 @@ public class Server {
         //TODO desharcodear
         ArrayList<String> ad = new ArrayList<>();
         ad.add("10.2.71.28");
-        ad.add("10.2.69.200");
+//        ad.add("10.2.69.200");
 
 
         logger.info("Hazelcast Server Starting ...");
@@ -35,9 +35,12 @@ public class Server {
                         )
 
                 .setInstanceName("TPE-Cluster")
+                //TODO ver si hay que hacer un mapa para cada query
                 .addMapConfig(new MapConfig().setName("people"))
                 .addMapConfig(new MapConfig().setName("departments"))
+                .addMapConfig(new MapConfig().setName("dept"))
                 .addMultiMapConfig(new MultiMapConfig().setName("people"));
+
 
 
         // Set minimum cluster size

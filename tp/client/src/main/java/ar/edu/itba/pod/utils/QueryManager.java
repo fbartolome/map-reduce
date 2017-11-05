@@ -123,7 +123,7 @@ public class QueryManager {
         }
     }
 
-    static public class SixthQuery implements Query<Long,Person,List<Entry<String,Integer>>> {
+    static public class SixthQuery implements Query<Long,Pair<String, String>,List<Entry<String,Integer>>> {
         private int n;
 
         public SixthQuery(int n) {
@@ -131,7 +131,7 @@ public class QueryManager {
         }
 
         @Override
-        public ICompletableFuture<List<Entry<String, Integer>>> getFuture(Job<Long, Person> job) {
+        public ICompletableFuture<List<Entry<String, Integer>>> getFuture(Job<Long, Pair<String, String>> job) {
             return job
                     .mapper(new DepartmentAndProvinceByInhabitantMapper())
                     .reducer(new DepartmentAndProvinceReducerFactory())
@@ -143,6 +143,7 @@ public class QueryManager {
             QueryManager.output(writer, response, QueryManager::defaultFormatter);
         }
     }
+
 
     static public class SeventhQuery implements Query<Long,Pair<String,String>,List<Entry<String,Integer>>> {
         private int n;
