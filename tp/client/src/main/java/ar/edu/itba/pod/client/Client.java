@@ -2,6 +2,7 @@ package ar.edu.itba.pod.client;
 
 import ar.edu.itba.pod.model.ActivityCondition;
 import ar.edu.itba.pod.utils.*;
+import com.google.common.base.Stopwatch;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.core.HazelcastInstance;
@@ -52,6 +53,7 @@ public class Client {
 //        Job<Long,Person> job = jobTracker.newJob(KeyValueSource.fromMap(map));
 //        Job <String,String> job7 = null;
 
+        Stopwatch timer = Stopwatch.createUnstarted();
         try {
             PrintWriter writer = new PrintWriter(arguments.getOutPath(), "UTF-8");
             Query query = null;
@@ -62,27 +64,40 @@ public class Client {
                     map.clear();
                     Map<Long,String> otherMap = new HashMap();
                     //TODO: change reading
+                    timer.start();
                     CSVReader.getRegions(arguments.getInputPath()).stream()
                         .forEach(r -> otherMap.put(count.getAndIncrement(),r));
                     map.putAll(otherMap);
+                    logger.info("Reading data took: " + timer);
+                    timer.stop().reset();
+                    timer.start();
                     query = new QueryManager.FirstQuery();
                     Job <Long,String> job1 = jobTracker.newJob(KeyValueSource.fromMap(map));
                     query.output(writer, query.getFuture(job1).get());
+                    logger.info("The query took: " + timer);
+                    timer.stop().reset();
                     break;
 
                 case 2:
                     logger.info("Creating local map with data");
                     HashMap<Long, String> query2Map = new HashMap<>();
+                    timer.start();
                     CSVReader.departmentInProv(arguments.getInputPath(), arguments.getProvince())
                             .stream()
                             .forEach(d -> query2Map.put(count.getAndIncrement(), d));
                     IMap<Long,String> map2 = client.getMap("departments");
                     logger.info("Start loading remote data");
                     map2.putAll(query2Map);
+                    logger.info("Reading data took: " + timer);
+                    timer.stop().reset();
+                    timer.start();
+                    logger.debug("map size " + map2.size());
                     logger.info("Finished loading remote data");
                     Job<Long, String> job2 = jobTracker.newJob(KeyValueSource.fromMap(map2));
                     query = new QueryManager.SecondQuery(arguments.getAmount(), arguments.getProvince());
                     query.output(writer, query.getFuture(job2).get());
+                    logger.info("The query took: " + timer);
+                    timer.stop().reset();
                     logger.info("Finished writing output");
                     break;
 
@@ -117,11 +132,17 @@ public class Client {
                 case 7:
                     final MultiMap<String,String> multiMap = client.getMultiMap(mapName);
                     multiMap.clear();
+                    timer.start();
                     CSVReader.getPeople(arguments.getInputPath()).stream()
                         .forEach(p -> multiMap.put(p.getProvinceName(),p.getDepartmentName()));
+                    logger.info("Reading data took: " + timer);
+                    timer.stop().reset();
+                    timer.start();
                     query = new QueryManager.SeventhQuery(arguments.getAmount());
                     Job <String,String> job7 = jobTracker.newJob(KeyValueSource.fromMultiMap(multiMap));
                     query.output(writer, query.getFuture(job7).get());
+                    logger.info("The query took: " + timer);
+                    timer.stop().reset();
                     break;
             }
 //            query.output(writer, query.getFuture(job7).get());
