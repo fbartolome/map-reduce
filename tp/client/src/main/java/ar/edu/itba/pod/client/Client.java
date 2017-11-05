@@ -32,13 +32,7 @@ public class Client {
         CLIParser cli = new CLIParser(args);
         ConsoleArguments arguments = cli.parse();
         final ClientConfig ccfg = new ClientConfig();
-        List<String> addresses = new ArrayList<>();
-
-        //TODO sacar esto hardcodeado
-        addresses.add("127.0.0.1");
-//        addresses.add("10.2.69.200");
-        ccfg.getNetworkConfig().setAddresses(addresses);
-//        ccfg.getNetworkConfig().setAddresses(Arrays.asList(arguments.getIps()));
+        ccfg.getNetworkConfig().setAddresses(Arrays.asList(arguments.getIps()));
 
         //TODO sacar este print, usado para debugging
         Arrays.asList(arguments.getIps()).stream().forEach(i -> System.out.println(i));
