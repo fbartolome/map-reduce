@@ -137,7 +137,6 @@ public class Client {
                     logger.info("Finished loading remote data");
                     Job<Long, Pair<String, String>> job6 = jobTracker.newJob(KeyValueSource.fromMap(map6));
                     query = new QueryManager.SixthQuery(arguments.getAmount());
-                    logger.debug("anda");
                     query.output(writer, query.getFuture(job6).get());
                     logger.info("Finished writing output");
                     break;

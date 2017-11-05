@@ -32,7 +32,7 @@ public class UnemploymentByRegionReducerFactory implements
     @Override
     public Double finalizeReduce() {
       return BigDecimal.valueOf(Double.valueOf(unemployed) / (employed + unemployed))
-          .setScale(2,RoundingMode.FLOOR).doubleValue();
+          .setScale(2, RoundingMode.HALF_DOWN).doubleValue();
     }
   }
 }
