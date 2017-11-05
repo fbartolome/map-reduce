@@ -2,173 +2,231 @@ package ar.edu.itba.pod.utils;
 
 import ar.edu.itba.pod.model.ActivityCondition;
 import ar.edu.itba.pod.model.Person;
+import ar.edu.itba.pod.model.RegionMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ar.edu.itba.pod.model.Regions;
 import javafx.util.Pair;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.*;
+import java.util.concurrent.atomic.LongAdder;
 
 public class CSVReader {
 
     private static Logger logger = LoggerFactory.getLogger(CSVReader.class);
 
     //not tested yet
-    public static Collection<Person> getPeople(String path){
+    public static Map<Long, Person> getPeople(String path){
         //read file into stream, try-with-resources
         logger.info("Start reading from CSV ...");
-        List<Person> people = new LinkedList<>();
-        Scanner filescanner = null;
+        Map<Long,Person> people = new HashMap<>();
         try {
-            filescanner = new Scanner(new File(path));
-        } catch (FileNotFoundException e) {
+            try(BufferedReader reader = new BufferedReader(new FileReader(path))) {
+                LongAdder lineCounter = new LongAdder();
+                reader.lines().forEach(line -> {
+                    String[] lineParts = line.split(",");
+                    int index = 0;
+                    lineCounter.increment();
+                    people.put(lineCounter.longValue(),
+                            new Person(
+                                    ActivityCondition.values()[Integer.valueOf(lineParts[index++])],
+                                    Integer.valueOf(lineParts[index++]),
+                                    lineParts[index++],
+                                    lineParts[index])
+                    );
+                });
+            }
+            logger.info("Finished reading from CSV ...");
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        String line;
-        while(filescanner.hasNext()){
-            line = filescanner.nextLine();
-            Scanner lineScanner = new Scanner(line).useDelimiter(",");
-            people.add(new Person(ActivityCondition.values()[Integer.valueOf(lineScanner.next())],
-                    Integer.valueOf(lineScanner.next()), lineScanner.next(), lineScanner.next()));
-        }
-
-        logger.info("Finished reading from CSV ...");
         return people;
     }
 
-    public static Collection<String> getRegions(String path){
+    public static Map<Long,Character> getRegions(String path){
         //read file into stream, try-with-resources
         logger.info("Start reading from CSV ...");
-        List<String> regions = new LinkedList<>();
-        Scanner filescanner = null;
+        Map<Long,Character> regions = new HashMap<>();
+
         try {
-            filescanner = new Scanner(new File(path));
-        } catch (FileNotFoundException e) {
+            try(BufferedReader reader = new BufferedReader(new FileReader(path))) {
+                LongAdder lineCounter = new LongAdder();
+                reader.lines().forEach(line -> {
+                    String[] lineParts = line.split(",");
+                    lineCounter.increment();
+                    regions.put(lineCounter.longValue(),
+                            RegionMapper.getKey(Regions.getRegion(lineParts[3])));
+                });
+            }
+
+        } catch (IOException e) {
             e.printStackTrace();
-        }
-        String line;
-        while(filescanner.hasNext()){
-            line = filescanner.nextLine();
-            Scanner lineScanner = new Scanner(line).useDelimiter(",");
-            lineScanner.next();
-            lineScanner.next();
-            lineScanner.next();
-            regions.add(Regions.getRegion(lineScanner.next()));
         }
         logger.info("Finished reading from CSV ...");
         return regions;
     }
 
-    public static Collection<Pair<String, ActivityCondition>> getConditionByRegion(String path){
-        //read file into stream, try-with-resources
-        List<Pair<String, ActivityCondition>> query = new LinkedList<>();
-        Scanner filescanner = null;
+    public static Map<Long, Pair<String, ActivityCondition>> getConditionByRegion(String path) {
+        logger.info("Start reading from CSV ...");
+        Map<Long, Pair<String, ActivityCondition>> query = new HashMap<>();
         try {
-            filescanner = new Scanner(new File(path));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        String line;
-        while(filescanner.hasNext()){
-            line = filescanner.nextLine();
-            Scanner lineScanner = new Scanner(line).useDelimiter(",");
-            ActivityCondition ac = ActivityCondition.values()[Integer.valueOf(lineScanner.next())];
-            lineScanner.next();
-            lineScanner.next();
-            String region = Regions.getRegion(lineScanner.next());
-            query.add(new Pair<>(region, ac));
-        }
-        return query;
-    }
-
-    public static Collection<Pair<String, Integer>> getHomesByRegionRawData(String path){
-        //read file into stream, try-with-resources
-        List<Pair<String, Integer>> query = new LinkedList<>();
-        Scanner filescanner = null;
-        try {
-            filescanner = new Scanner(new File(path));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        return getHomesByRegion(filescanner, query);
-    }
-
-    public static Collection<Pair<String, Integer>> getHomesByRegionLocalFilter(String path){
-        //read file into stream, try-with-resources
-        Set<Pair<String, Integer>> query = new HashSet<>();
-        Scanner filescanner = null;
-        try {
-            filescanner = new Scanner(new File(path));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        return getHomesByRegion(filescanner, query);
-    }
-
-    private static Collection<Pair<String, Integer>> getHomesByRegion(Scanner filescanner, Collection<Pair<String, Integer>> collection){
-        String line;
-        while(filescanner.hasNext()){
-            line = filescanner.nextLine();
-            Scanner lineScanner = new Scanner(line).useDelimiter(",");
-            lineScanner.next();
-            Integer homeId = Integer.valueOf(lineScanner.next());
-            lineScanner.next();
-            String region = Regions.getRegion(lineScanner.next());
-            collection.add(new Pair<>(region, homeId));
-        }
-        return collection;
-    }
-
-
-    //First value of Pair is the department and the second one is the province.
-    public static Collection<Pair<String, String>> getDepartmentsAndProvinces(String path){
-        //read file into stream, try-with-resources
-        Set<Pair<String, String>> query = new HashSet<>();
-        Scanner filescanner = null;
-        try {
-            filescanner = new Scanner(new File(path));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        String line;
-        while(filescanner.hasNext()){
-            line = filescanner.nextLine();
-            Scanner lineScanner = new Scanner(line).useDelimiter(",");
-            lineScanner.next();
-            lineScanner.next();
-            query.add(new Pair<>(lineScanner.next(), lineScanner.next()));
-        }
-        return query;
-    }
-    public static Collection<String> departmentInProv(String path, String prov){
-
-        logger.info("Start reading departments in " + prov + " from CSV ...");
-
-        //read file into stream, try-with-resources
-        List<String> departments = new LinkedList<>();
-        Scanner filescanner = null;
-        try {
-            filescanner = new Scanner(new File(path));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        String line;
-        while(filescanner.hasNext()){
-            line = filescanner.nextLine();
-            Scanner lineScanner = new Scanner(line).useDelimiter(",");
-            lineScanner.next();
-            lineScanner.next();
-            String department = lineScanner.next();
-            String province = lineScanner.next();
-            if(prov.equals(province)){
-                departments.add(department);
+            try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
+                LongAdder lineCounter = new LongAdder();
+                reader.lines().forEach(line -> {
+                    String[] lineParts = line.split(",");
+                    lineCounter.increment();
+                    query.put(lineCounter.longValue(),
+                            new Pair(
+                                    ActivityCondition.values()[Integer.valueOf(lineParts[0])],
+                                    Regions.getRegion(lineParts[3])
+                            )
+                    );
+                });
             }
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        logger.info("Finished reading from CSV ...");
+        return query;
+    }
+
+    public static Map<String, Integer> getHomesByHomeKey(String path){
+        //read file into stream, try-with-resources
+        logger.info("Start reading from CSV ...");
+        Map<String, Integer> query = new HashMap<>();
+        try {
+            try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
+                reader.lines().forEach(line -> {
+                    String[] lineParts = line.split(",");
+                    query.put(Regions.getRegion(lineParts[3]),Integer.valueOf(lineParts[1]));
+                });
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        logger.info("Finished reading from CSV ...");
+        return query;
+    }
+
+    public static Map<Long, Pair<String, Integer>> getHomesByRegionRawData(String path){
+        //read file into stream, try-with-resources
+        logger.info("Start reading from CSV ...");
+        Map<Long, Pair<String, Integer>> query = new HashMap<>();
+        try {
+            try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
+                LongAdder lineCounter = new LongAdder();
+                reader.lines().forEach(line -> {
+                    String[] lineParts = line.split(",");
+                    lineCounter.increment();
+                    query.put(lineCounter.longValue(),
+                            new Pair(
+                                    Regions.getRegion(lineParts[3]),
+                                    Integer.valueOf(lineParts[1])
+                            )
+                    );
+                });
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        logger.info("Finished reading from CSV ...");
+        return query;
+    }
+
+
+    public static Map<Long, Pair<String, Integer>> getHomesByRegionLocalFilter(String path){
+        //read file into stream, try-with-resources
+        logger.info("Start reading from CSV ...");
+        Set<Pair<String, Integer>> set = new HashSet<>();
+        try {
+            try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
+                reader.lines().forEach(line -> {
+                    String[] lineParts = line.split(",");
+                    set.add(
+                            new Pair(
+                                    Regions.getRegion(lineParts[3]),
+                                    Integer.valueOf(lineParts[1])
+                            )
+                    );
+                });
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Map<Long, Pair<String, Integer>> query = new HashMap<>();
+        LongAdder lineCounter = new LongAdder();
+        set.stream().forEach(p -> {
+                query.put(lineCounter.longValue(), p);
+                lineCounter.increment();
+            }
+        );
 
         logger.info("Finished reading from CSV ...");
-        return departments;
+        return query;
+    }
+
+    //First value of Pair is the department and the second one is the province.
+    public static Map<Long, Pair<String, String>> getDepartmentsAndProvinces(String path){
+        //read file into stream, try-with-resources
+        logger.info("Start reading from CSV ...");
+        Set<Pair<String, String>> set = new HashSet<>();
+        try {
+            try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
+                reader.lines().forEach(line -> {
+                    String[] lineParts = line.split(",");
+                    set.add(
+                            new Pair(
+                                    lineParts[2],
+                                    lineParts[3]
+                            )
+                    );
+                });
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Map<Long, Pair<String, String>> query = new HashMap<>();
+        LongAdder lineCounter = new LongAdder();
+        set.stream().forEach(p -> {
+                    query.put(lineCounter.longValue(), p);
+                    lineCounter.increment();
+                }
+        );
+
+        logger.info("Finished reading from CSV ...");
+        return query;
+    }
+    public static Map<Long, String> departmentInProv(String path, String prov){
+        //read file into stream, try-with-resources
+        logger.info("Start reading from CSV ...");
+        Map<Long, String> query = new HashMap<>();
+        try {
+            try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
+                LongAdder lineCounter = new LongAdder();
+                reader.lines().forEach(line -> {
+                    String[] lineParts = line.split(",");
+                    String department = lineParts[2];
+                    String province = lineParts[3];
+                    if(prov.equals(province)){
+                        lineCounter.increment();
+                        query.put(lineCounter.longValue(),
+                                department
+                        );
+                    }
+                });
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        logger.info("Finished reading from CSV ...");
+        return query;
     }
 
 }

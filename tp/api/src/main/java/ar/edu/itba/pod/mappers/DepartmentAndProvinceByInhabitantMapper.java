@@ -4,10 +4,10 @@ import com.hazelcast.mapreduce.Context;
 import com.hazelcast.mapreduce.Mapper;
 import javafx.util.Pair;
 
-public class DepartmentAndProvinceByInhabitantMapper implements Mapper<Long, Pair<String, String>, String, String>  {
+public class DepartmentAndProvinceByInhabitantMapper implements Mapper<Long, Pair<String, String>, String, Integer>  {
 
     @Override
-    public void map(Long aLong, Pair<String, String> stringStringPair, Context<String, String> context) {
-        context.emit(stringStringPair.getKey(), stringStringPair.getValue());
+    public void map(Long aLong, Pair<String, String> pair, Context<String, Integer> context) {
+        context.emit(pair.getKey(), 1);
     }
 }

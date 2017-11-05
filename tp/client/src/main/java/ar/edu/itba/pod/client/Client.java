@@ -57,12 +57,10 @@ public class Client {
 
                 case 1:
                     logger.info("Creating local map with data");
-                    final IMap<Long,String> map1 = client.getMap(mapName);
+                    final IMap<Long,Character> map1 = client.getMap(mapName);
                     map1.clear();
-                    Map<Long,String> query1Map = new HashMap();
                     timer.start();
-                    CSVReader.getRegions(arguments.getInputPath()).stream()
-                        .forEach(r -> query1Map.put(count.getAndIncrement(),r));
+                    Map<Long,Character> query1Map = CSVReader.getRegions(arguments.getInputPath());
                     timerFile.append("Reading data took: " + timer).println();
                     timer.stop().reset();
                     timer.start();
@@ -70,7 +68,7 @@ public class Client {
                     map1.putAll(query1Map);
                     logger.info("Finished loading remote data");
                     query = new QueryManager.FirstQuery();
-                    Job <Long,String> job1 = jobTracker.newJob(KeyValueSource.fromMap(map1));
+                    Job <Long,Character> job1 = jobTracker.newJob(KeyValueSource.fromMap(map1));
                     query.output(writer, query.getFuture(job1).get());
                     timerFile.append("Query" + arguments.getQueryNumber() + " took: " + timer).println();
                     timer.stop().reset();
@@ -79,11 +77,8 @@ public class Client {
 
                 case 2:
                     logger.info("Creating local map with data");
-                    HashMap<Long, String> query2Map = new HashMap<>();
                     timer.start();
-                    CSVReader.departmentInProv(arguments.getInputPath(), arguments.getProvince())
-                            .stream()
-                            .forEach(d -> query2Map.put(count.getAndIncrement(), d));
+                    Map<Long, String> query2Map = CSVReader.departmentInProv(arguments.getInputPath(), arguments.getProvince());
                     IMap<Long,String> map2 = client.getMap("departments");
                     map2.clear();
                     logger.info("Start loading remote data");
@@ -103,10 +98,7 @@ public class Client {
 
                 case 3:
                     logger.info("Creating local map with data");
-                    HashMap<Long, Pair<String, ActivityCondition>> auxMap = new HashMap<>();
-                    CSVReader.getConditionByRegion(arguments.getInputPath())
-                            .stream()
-                            .forEach(p -> auxMap.put(count.getAndIncrement(), p));
+                    Map<Long, Pair<String, ActivityCondition>> auxMap = CSVReader.getConditionByRegion(arguments.getInputPath());
                     IMap<Long, Pair<String, ActivityCondition>> map3 = client.getMap("activityConditions");
                     logger.info("Start loading remote data");
                     map3.putAll(auxMap);
@@ -119,16 +111,15 @@ public class Client {
 
                 case 4:
                     logger.info("Creating local map with data");
-                    final IMap<Integer,String> map4 = client.getMap(mapName);
+                    final IMap<String,Integer> map4 = client.getMap(mapName);
                     map4.clear();
-                    Map<Integer,String> otherMap4 = new HashMap();
-                    CSVReader.getHomesByRegionRawData(arguments.getInputPath()).stream()
-                        .forEach(r -> otherMap4.put(r.getValue(),r.getKey()));
+
+                    Map<String,Integer> otherMap4 = CSVReader.getHomesByHomeKey(arguments.getInputPath());
                     logger.info("Start loading remote data");
                     map4.putAll(otherMap4);
                     logger.info("Finished loading remote data");
                     query = new QueryManager.FourthQuery();
-                    Job <Integer,String> job4 = jobTracker.newJob(KeyValueSource.fromMap(map4));
+                    Job <String,Integer> job4 = jobTracker.newJob(KeyValueSource.fromMap(map4));
                     query.output(writer, query.getFuture(job4).get());
                     logger.info("Finished writing output");
                     break;
@@ -137,9 +128,7 @@ public class Client {
                     logger.info("Creating local map with data");
                     final IMap<Long,Pair<String,Integer>> map5 = client.getMap(mapName);
                     map5.clear();
-                    Map<Long,Pair<String,Integer>> otherMap5 = new HashMap();
-                    CSVReader.getHomesByRegionRawData(arguments.getInputPath()).stream()
-                        .forEach(p -> otherMap5.put(count.getAndIncrement(),p));
+                    Map<Long,Pair<String,Integer>> otherMap5 = CSVReader.getHomesByRegionRawData(arguments.getInputPath());
                     logger.info("Start loading remote data");
                     map5.putAll(otherMap5);
                     logger.info("Finished loading remote data");
@@ -151,10 +140,7 @@ public class Client {
 
                 case 6:
                     logger.info("Creating local map with data");
-                    HashMap<Long, Pair<String, String>> auxMap6 = new HashMap<>();
-                    CSVReader.getDepartmentsAndProvinces(arguments.getInputPath())
-                            .stream()
-                            .forEach(p -> auxMap6.put(count.getAndIncrement(), p));
+                    Map<Long, Pair<String, String>> auxMap6 = CSVReader.getDepartmentsAndProvinces(arguments.getInputPath());
                     IMap<Long, Pair<String, String>> map6 = client.getMap("dept");
                     logger.info("Start loading remote data");
                     map6.putAll(auxMap6);
@@ -169,10 +155,8 @@ public class Client {
                     logger.info("Creating local map with data");
                     final IMap<Long,Pair<String,String>> map7 = client.getMap(mapName);
                     map7.clear();
-                    final Map<Long,Pair<String,String>> query7Map = new HashMap<>();
                     timer.start();
-                    CSVReader.getDepartmentsAndProvinces(arguments.getInputPath()).stream()
-                        .forEach(p -> query7Map.put(count.getAndIncrement(),p));
+                    final Map<Long,Pair<String,String>> query7Map = CSVReader.getDepartmentsAndProvinces(arguments.getInputPath());
                     timerFile.append("Reading data took: " + timer).println();
                     timer.stop().reset();
                     timer.start();

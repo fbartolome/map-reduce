@@ -15,7 +15,7 @@ public class Server {
 
         //TODO desharcodear
         ArrayList<String> ad = new ArrayList<>();
-        ad.add("10.2.71.28");
+        ad.add("10.2.64.88");
 //        ad.add("10.2.69.200");
 
 
