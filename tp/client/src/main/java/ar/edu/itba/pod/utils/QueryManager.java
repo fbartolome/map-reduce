@@ -107,16 +107,14 @@ public class QueryManager {
         }
     }
 
-    static public class FifthQuery implements Query<Long,Person,List<Entry<String,Double>>> {
+    static public class FifthQuery implements Query<Long,Pair<Integer,String>,List<Entry<String,Double>>> {
 
         @Override
-        public ICompletableFuture<List<Entry<String, Double>>> getFuture(Job<Long, Person> job) {
-            //FIXME
-            return null;
-//            return job
-//                    .mapper(new HomesByRegionMapper())
-//                    .reducer(new AvgInhabitantsPerHouseholdByRegionReducerFactory())
-//                    .submit(new OrderByCollator(false, false));
+        public ICompletableFuture<List<Entry<String, Double>>> getFuture(Job<Long,Pair<Integer,String>> job) {
+            return job
+                    .mapper(new InhabitantsPerHouseholdByRegionMapper())
+                    .reducer(new InhabitantsPerHouseholdByRegionReducerFactory())
+                    .submit(new OrderByCollator(false, false));
         }
 
         @Override
