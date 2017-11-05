@@ -46,19 +46,19 @@ public class CLIParser {
                 exit(0);
             }
 
-            if(!cmd.hasOption(addressesArg)) throw new IllegalStateException("No IP addresses specified, use -h,--help for more information");
+            if(!cmd.hasOption(addressesArg)) throw new IllegalStateException("No IP addresses specified, use -Daddresses to specify addresses. Use -h,--help for more information");
             String[] addresses = cmd.getOptionValue(addressesArg).split(";");
 
-            if(!cmd.hasOption(queryNumberArg)) throw new IllegalStateException("No query specified, use -h,--help for more information");
+            if(!cmd.hasOption(queryNumberArg)) throw new IllegalStateException("No query specified, use -Dquery to choose query number. Use -h,--help for more information");
             int queryNumber = Integer.parseInt(cmd.getOptionValue(queryNumberArg));
 
-            if(!cmd.hasOption(inputPathArg)) throw new IllegalStateException("No Input Path specified, use -h,--help for more information");
+            if(!cmd.hasOption(inputPathArg)) throw new IllegalStateException("No Input Path specified, use -DinPath to specify path. Use -h,--help for more information");
             String inputPath = cmd.getOptionValue(inputPathArg);
 
-            if(!cmd.hasOption(outputPathArg)) throw new IllegalStateException("No Output Path specified, use -h,--help for more information");
+            if(!cmd.hasOption(outputPathArg)) throw new IllegalStateException("No Output Path specified, use -DoutPath to specify path. Use -h,--help for more information");
             String outputPath = cmd.getOptionValue(outputPathArg);
 
-            if(!cmd.hasOption(timeOutPathArg)) throw new IllegalStateException("No TimeStamp Path specified, use -h,--help for more information");
+            if(!cmd.hasOption(timeOutPathArg)) throw new IllegalStateException("No TimeStamp Path specified, use -DtimeOutPath to specify path. Use -h,--help for more information");
             String timeOutPath = cmd.getOptionValue(timeOutPathArg);
 
             arguments = new ConsoleArguments(addresses,queryNumber,inputPath,outputPath,timeOutPath);

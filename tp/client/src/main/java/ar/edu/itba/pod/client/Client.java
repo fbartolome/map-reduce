@@ -2,7 +2,6 @@ package ar.edu.itba.pod.client;
 
 import ar.edu.itba.pod.model.Person;
 import ar.edu.itba.pod.utils.*;
-import ar.edu.itba.pod.utils.QueryManager.FifthQuery;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.core.HazelcastInstance;
@@ -16,7 +15,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -35,7 +36,16 @@ public class Client {
 
         final ClientConfig ccfg = new ClientConfig();
 
-        ccfg.getNetworkConfig().setAddresses(Arrays.asList(arguments.getIps()));
+        List<String> addresses = new ArrayList<>();
+
+        addresses.add("127.0.0.1");
+        addresses.add("10.2.69.200");
+
+//        ccfg.getNetworkConfig().setAddresses(Arrays.asList(arguments.getIps()));
+
+        ccfg.getNetworkConfig().setAddresses(addresses);
+
+        Arrays.asList(arguments.getIps()).stream().forEach(i -> System.out.println(i));
 
         final HazelcastInstance client = HazelcastClient.newHazelcastClient(ccfg);
 
@@ -45,8 +55,6 @@ public class Client {
 
         //"./client/src/main/resources/census100.csv"
         CSVReader.readCSV(arguments.getInputPath()).stream().forEach(p -> map.put(count.getAndIncrement(), p));
-
-
 
 
         JobTracker jobTracker = client.getJobTracker("tracker");
@@ -92,7 +100,7 @@ public class Client {
                     break;
             }
 
-            query.output(writer, query.getFuture(job7).get());
+            query.output(writer, query.getFuture(job).get());
 
         }catch (IOException e) {
             System.err.println("There was an error writing the output " + e.getMessage());

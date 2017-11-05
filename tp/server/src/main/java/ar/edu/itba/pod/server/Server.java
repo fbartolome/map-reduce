@@ -1,23 +1,43 @@
 package ar.edu.itba.pod.server;
 
-import com.hazelcast.config.Config;
-import com.hazelcast.config.MapConfig;
-import com.hazelcast.config.MultiMapConfig;
+import com.hazelcast.config.*;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
 
 public class Server {
     private static Logger logger = LoggerFactory.getLogger(Server.class);
 
     public static void main(String[] args) {
 
-        logger.info("hazelcast Server Starting ...");
-        Config config = new Config();
-        config.setInstanceName("TPE-Cluster");
-        config.addMapConfig(new MapConfig().setName("people"));
-        config.addMultiMapConfig(new MultiMapConfig().setName("people"));
+        //TODO desharcodear
+        ArrayList<String> ad = new ArrayList<>();
+        ad.add("10.2.71.28");
+        ad.add("10.2.69.200");
+
+
+        logger.info("Hazelcast Server Starting ...");
+        Config config = new Config()
+                .setNetworkConfig(new NetworkConfig()
+                .setJoin(new JoinConfig()
+                    .setMulticastConfig(new MulticastConfig()
+                        .setEnabled(false))
+                    .setTcpIpConfig(new TcpIpConfig()
+                        .setEnabled(true)
+                        .setMembers(ad)))
+                    .setInterfaces(new InterfacesConfig()
+                        .setEnabled(true)
+                        //TODO desharcodear
+                        .addInterface("10.2.71.*"))
+                        )
+
+                .setInstanceName("TPE-Cluster")
+                .addMapConfig(new MapConfig().setName("people"))
+                .addMultiMapConfig(new MultiMapConfig().setName("people"));
+
 
         // Set minimum cluster size
         //config.setProperty("hazelcast.initial.min.cluster.size","2");
