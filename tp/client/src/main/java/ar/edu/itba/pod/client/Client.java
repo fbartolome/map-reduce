@@ -6,6 +6,7 @@ import ar.edu.itba.pod.utils.QueryManager.FifthQuery;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IList;
 import com.hazelcast.core.IMap;
 import com.hazelcast.core.MultiMap;
 import com.hazelcast.mapreduce.Job;
@@ -51,8 +52,8 @@ public class Client {
 
         JobTracker jobTracker = client.getJobTracker("tracker");
         //TODO: los jobs no se hacen siempre igual, hay que ponerlos en cada case
-        Job<Long,Person> job = jobTracker.newJob(KeyValueSource.fromMap(map));
-        Job <String,String> job7 = null;
+//        Job<Long,Person> job = jobTracker.newJob(KeyValueSource.fromMap(map));
+//        Job <String,String> job7 = null;
 
         try {
             PrintWriter writer = new PrintWriter(arguments.getOutPath(), "UTF-8");
@@ -60,7 +61,13 @@ public class Client {
             switch (arguments.getQueryNumber()) {
 
                 case 1:
+                    final IList<String> list = client.getList(mapName);
+                    list.clear();
+                    CSVReader.readCSV(arguments.getInputPath()).stream()
+                        .forEach(p -> list.add(p.getRegion()));
                     query = new QueryManager.FirstQuery();
+                    Job <String,String> job1 = jobTracker.newJob(KeyValueSource.fromList(list));
+                    query.output(writer, query.getFuture(job1).get());
                     break;
 
                 case 2:
@@ -85,14 +92,16 @@ public class Client {
 
                 case 7:
                     final MultiMap<String,String> multiMap = client.getMultiMap(mapName);
+                    multiMap.clear();
                     CSVReader.readCSV(arguments.getInputPath()).stream()
                         .forEach(p -> multiMap.put(p.getProvinceName(),p.getDepartmentName()));
                     query = new QueryManager.SeventhQuery(arguments.getAmount());
-                    job7 = jobTracker.newJob(KeyValueSource.fromMultiMap(multiMap));
+                    Job <String,String> job7 = jobTracker.newJob(KeyValueSource.fromMultiMap(multiMap));
+                    query.output(writer, query.getFuture(job7).get());
                     break;
             }
 
-            query.output(writer, query.getFuture(job7).get());
+//            query.output(writer, query.getFuture(job7).get());
 
         }catch (IOException e) {
             System.err.println("There was an error writing the output " + e.getMessage());

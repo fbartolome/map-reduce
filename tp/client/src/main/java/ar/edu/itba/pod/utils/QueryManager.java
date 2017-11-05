@@ -29,14 +29,14 @@ public class QueryManager {
         writer.flush();
     }
 
-    static public class FirstQuery implements Query<Long,Person,List<Entry<String,Long>>> {
+    static public class FirstQuery implements Query<String,String,List<Entry<String,Long>>> {
 
         @Override
-        public ICompletableFuture<List<Entry<String, Long>>> getFuture(Job<Long, Person> job) {
+        public ICompletableFuture<List<Entry<String, Long>>> getFuture(Job<String, String> job) {
             return job
                     .mapper(new InhabitantsByRegionMapper())
                     .reducer(new CountReducerFactory<>())
-                    .submit(new OrderByCollator(true, false));
+                    .submit(new OrderByCollator(false, false));
         }
 
         @Override
