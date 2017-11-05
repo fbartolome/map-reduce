@@ -134,7 +134,7 @@ public class QueryManager {
         public ICompletableFuture<List<Entry<String, Integer>>> getFuture(Job<Long, Pair<String, String>> job) {
             return job
                     .mapper(new DepartmentAndProvinceByInhabitantMapper())
-                    .reducer(new DepartmentAndProvinceReducerFactory())
+                    .reducer(new CountReducerFactory<>())
                     .submit(new MinAmountAndOrderCollator(false, false, n));
         }
 

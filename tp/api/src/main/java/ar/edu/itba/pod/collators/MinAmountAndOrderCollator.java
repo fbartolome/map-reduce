@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class MinAmountAndOrderCollator <K extends Comparable<K>>
-        extends OrderByCollator<K,Integer> {
+        extends OrderByCollator<K,Long> {
 
     private Integer minAmount;
 
@@ -15,9 +15,9 @@ public class MinAmountAndOrderCollator <K extends Comparable<K>>
     }
 
     @Override
-    public List<Map.Entry<K,Integer>> collate(Iterable<Map.Entry<K, Integer>> iterable) {
-        List<Map.Entry<K,Integer>> ret = super.collate(iterable);
-        return ret.stream().filter(e -> minAmount.compareTo(e.getValue()) <= 0).collect(Collectors.toList());
+    public List<Map.Entry<K,Long>> collate(Iterable<Map.Entry<K, Long>> iterable) {
+        List<Map.Entry<K,Long>> ret = super.collate(iterable);
+        return ret.stream().filter(e -> e.getValue() > minAmount).collect(Collectors.toList());
     }
 
 
