@@ -30,26 +30,16 @@ public class Client {
     public static void main(String[] args) {
         logger.info("hazelcast Client Starting ...");
 
-
         CLIParser cli = new CLIParser(args);
         ConsoleArguments arguments = cli.parse();
+
         final ClientConfig ccfg = new ClientConfig();
         ccfg.getNetworkConfig().setAddresses(Arrays.asList(arguments.getIps()));
-
         final HazelcastInstance client = HazelcastClient.newHazelcastClient(ccfg);
 
-        //TODO: no necesariamente es un mapa
-//        IMap<Long,Person> map = client.getMap(mapName);
         final AtomicLong count = new AtomicLong(0);
 
-        //"./client/src/main/resources/census100.csv"
-//        CSVReader.readCSV(arguments.getInputPath()).stream().forEach(p -> map.put(count.getAndIncrement(), p));
-
-
         JobTracker jobTracker = client.getJobTracker("tracker");
-        //TODO: los jobs no se hacen siempre igual, hay que ponerlos en cada case
-//        Job<Long,Person> job = jobTracker.newJob(KeyValueSource.fromMap(map));
-//        Job <String,String> job7 = null;
 
         Stopwatch timer = Stopwatch.createUnstarted();
         try {
