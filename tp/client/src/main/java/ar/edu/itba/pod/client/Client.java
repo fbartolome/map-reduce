@@ -103,15 +103,15 @@ public class Client {
 
                 case 3:
                     logger.info("Creating local map with data");
-                    HashMap<Long, Pair<ActivityCondition, String>> auxMap = new HashMap<>();
+                    HashMap<Long, Pair<String, ActivityCondition>> auxMap = new HashMap<>();
                     CSVReader.getConditionByRegion(arguments.getInputPath())
                             .stream()
                             .forEach(p -> auxMap.put(count.getAndIncrement(), p));
-                    IMap<Long, Pair<ActivityCondition, String>> map3 = client.getMap("activityConditions");
+                    IMap<Long, Pair<String, ActivityCondition>> map3 = client.getMap("activityConditions");
                     logger.info("Start loading remote data");
                     map3.putAll(auxMap);
                     logger.info("Finished loading remote data");
-                    Job<Long, Pair<ActivityCondition, String>> job3 = jobTracker.newJob(KeyValueSource.fromMap(map3));
+                    Job<Long, Pair<String, ActivityCondition>> job3 = jobTracker.newJob(KeyValueSource.fromMap(map3));
                     query = new QueryManager.ThirdQuery();
                     query.output(writer, query.getFuture(job3).get());
                     logger.info("Finished writing output");
@@ -123,7 +123,7 @@ public class Client {
                     map4.clear();
                     Map<Integer,String> otherMap4 = new HashMap();
                     CSVReader.getHomesByRegionRawData(arguments.getInputPath()).stream()
-                        .forEach(r -> otherMap4.put(r.getKey(),r.getValue()));
+                        .forEach(r -> otherMap4.put(r.getValue(),r.getKey()));
                     logger.info("Start loading remote data");
                     map4.putAll(otherMap4);
                     logger.info("Finished loading remote data");
@@ -135,16 +135,16 @@ public class Client {
 
                 case 5:
                     logger.info("Creating local map with data");
-                    final IMap<Long,Pair<Integer,String>> map5 = client.getMap(mapName);
+                    final IMap<Long,Pair<String,Integer>> map5 = client.getMap(mapName);
                     map5.clear();
-                    Map<Long,Pair<Integer,String>> otherMap5 = new HashMap();
+                    Map<Long,Pair<String,Integer>> otherMap5 = new HashMap();
                     CSVReader.getHomesByRegionRawData(arguments.getInputPath()).stream()
                         .forEach(p -> otherMap5.put(count.getAndIncrement(),p));
                     logger.info("Start loading remote data");
                     map5.putAll(otherMap5);
                     logger.info("Finished loading remote data");
                     query = new QueryManager.FifthQuery();
-                    Job <Long,Pair<Integer,String>> job5 = jobTracker.newJob(KeyValueSource.fromMap(map5));
+                    Job <Long,Pair<String,Integer>> job5 = jobTracker.newJob(KeyValueSource.fromMap(map5));
                     query.output(writer, query.getFuture(job5).get());
                     logger.info("Finished writing output");
                     break;

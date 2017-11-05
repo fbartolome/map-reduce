@@ -39,7 +39,7 @@ public class QueryManager {
         public ICompletableFuture<List<Entry<String, Long>>> getFuture(Job<Long, String> job) {
             logger.debug("getFuture in first Query");
             return job
-                    .mapper(new InhabitantsByRegionMapper())
+                    .mapper(new UnitMapper<>())
                     .reducer(new CountReducerFactory<>())
                     .submit(new OrderByCollator(false, false));
         }
@@ -64,7 +64,7 @@ public class QueryManager {
         @Override
         public ICompletableFuture<List<Entry<String, Long>>> getFuture(Job<Long, String> job) {
             return job
-                    .mapper(new MostInhabitedProvinceDeptsMapper())
+                    .mapper(new UnitMapper<>())
                     .reducer(new CountReducerFactory<>())
                     .submit(new TopAndOrderByCollator<>(n, false, false));
         }
@@ -75,12 +75,12 @@ public class QueryManager {
         }
     }
 
-    static public class ThirdQuery implements Query<Long, Pair<ActivityCondition, String>,List<Entry<String,Double>>> {
+    static public class ThirdQuery implements Query<Long, Pair<String, ActivityCondition>,List<Entry<String,Double>>> {
 
         @Override
-        public ICompletableFuture<List<Entry<String, Double>>> getFuture(Job<Long, Pair<ActivityCondition, String>> job) {
+        public ICompletableFuture<List<Entry<String, Double>>> getFuture(Job<Long, Pair<String, ActivityCondition>> job) {
             return job
-                    .mapper(new UnemploymentIndexByRegionMapper())
+                    .mapper(new KeyValueMapper<>())
                     .reducer(new UnemploymentByRegionReducerFactory())
                     .submit(new OrderByCollator(false, false));
         }
@@ -96,7 +96,7 @@ public class QueryManager {
         @Override
         public ICompletableFuture<List<Entry<String, Long>>> getFuture(Job<Integer, String> job) {
             return job
-                    .mapper(new HomesByRegionMapper())
+                    .mapper(new UnitMapper<>())
                     .reducer(new CountReducerFactory())
                     .submit(new OrderByCollator(false, false));
         }
@@ -107,12 +107,12 @@ public class QueryManager {
         }
     }
 
-    static public class FifthQuery implements Query<Long,Pair<Integer,String>,List<Entry<String,Double>>> {
+    static public class FifthQuery implements Query<Long,Pair<String,Integer>,List<Entry<String,Double>>> {
 
         @Override
-        public ICompletableFuture<List<Entry<String, Double>>> getFuture(Job<Long,Pair<Integer,String>> job) {
+        public ICompletableFuture<List<Entry<String, Double>>> getFuture(Job<Long,Pair<String,Integer>> job) {
             return job
-                    .mapper(new InhabitantsPerHouseholdByRegionMapper())
+                    .mapper(new KeyValueMapper<>())
                     .reducer(new InhabitantsPerHouseholdByRegionReducerFactory())
                     .submit(new OrderByCollator(false, false));
         }
@@ -133,7 +133,7 @@ public class QueryManager {
         @Override
         public ICompletableFuture<List<Entry<String, Integer>>> getFuture(Job<Long, Pair<String, String>> job) {
             return job
-                    .mapper(new DepartmentAndProvinceByInhabitantMapper())
+                    .mapper(new KeyValueMapper<>())
                     .reducer(new DepartmentAndProvinceReducerFactory())
                     .submit(new MinAmountAndOrderCollator(false, false, n));
         }
@@ -155,7 +155,7 @@ public class QueryManager {
         @Override
         public ICompletableFuture<List<Entry<String, Integer>>> getFuture(Job<Long,Pair<String,String>> job) {
             return job
-                .mapper(new MostSharingDeptsProvsMapper())
+                .mapper(new KeyValueMapper<>())
                 .reducer(new MostSharingDeptsProvsReducerFactory())
                 .submit(new MinAmountAndOrderCollator(false,false,n));
         }

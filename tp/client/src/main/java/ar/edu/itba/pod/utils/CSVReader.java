@@ -61,9 +61,9 @@ public class CSVReader {
         return regions;
     }
 
-    public static Collection<Pair<ActivityCondition, String>> getConditionByRegion(String path){
+    public static Collection<Pair<String, ActivityCondition>> getConditionByRegion(String path){
         //read file into stream, try-with-resources
-        List<Pair<ActivityCondition, String>> query = new LinkedList<>();
+        List<Pair<String, ActivityCondition>> query = new LinkedList<>();
         Scanner filescanner = null;
         try {
             filescanner = new Scanner(new File(path));
@@ -78,14 +78,14 @@ public class CSVReader {
             lineScanner.next();
             lineScanner.next();
             String region = Regions.getRegion(lineScanner.next());
-            query.add(new Pair<>(ac, region));
+            query.add(new Pair<>(region, ac));
         }
         return query;
     }
 
-    public static Collection<Pair<Integer, String>> getHomesByRegionRawData(String path){
+    public static Collection<Pair<String, Integer>> getHomesByRegionRawData(String path){
         //read file into stream, try-with-resources
-        List<Pair<Integer, String>> query = new LinkedList<>();
+        List<Pair<String, Integer>> query = new LinkedList<>();
         Scanner filescanner = null;
         try {
             filescanner = new Scanner(new File(path));
@@ -95,9 +95,9 @@ public class CSVReader {
         return getHomesByRegion(filescanner, query);
     }
 
-    public static Collection<Pair<Integer, String>> getHomesByRegionLocalFilter(String path){
+    public static Collection<Pair<String, Integer>> getHomesByRegionLocalFilter(String path){
         //read file into stream, try-with-resources
-        Set<Pair<Integer, String>> query = new HashSet<>();
+        Set<Pair<String, Integer>> query = new HashSet<>();
         Scanner filescanner = null;
         try {
             filescanner = new Scanner(new File(path));
@@ -107,7 +107,7 @@ public class CSVReader {
         return getHomesByRegion(filescanner, query);
     }
 
-    private static Collection<Pair<Integer, String>> getHomesByRegion(Scanner filescanner, Collection<Pair<Integer, String>> collection){
+    private static Collection<Pair<String, Integer>> getHomesByRegion(Scanner filescanner, Collection<Pair<String, Integer>> collection){
         String line;
         while(filescanner.hasNext()){
             line = filescanner.nextLine();
@@ -116,7 +116,7 @@ public class CSVReader {
             Integer homeId = Integer.valueOf(lineScanner.next());
             lineScanner.next();
             String region = Regions.getRegion(lineScanner.next());
-            collection.add(new Pair<>(homeId, region));
+            collection.add(new Pair<>(region, homeId));
         }
         return collection;
     }
