@@ -60,10 +60,8 @@ public class Client {
                     logger.info("Creating local map with data");
                     final IMap<Long,String> map1 = client.getMap(mapName);
                     map1.clear();
-                    Map<Long,String> query1Map = new HashMap();
                     timer.start();
-                    CSVReader.getRegions(arguments.getInputPath()).stream()
-                        .forEach(r -> query1Map.put(count.getAndIncrement(),r));
+                    Map<Long,String> query1Map = CSVReader.getRegions(arguments.getInputPath());
                     logger.info("Reading data took: " + timer);
                     timer.stop().reset();
                     timer.start();
@@ -80,11 +78,8 @@ public class Client {
 
                 case 2:
                     logger.info("Creating local map with data");
-                    HashMap<Long, String> query2Map = new HashMap<>();
                     timer.start();
-                    CSVReader.departmentInProv(arguments.getInputPath(), arguments.getProvince())
-                            .stream()
-                            .forEach(d -> query2Map.put(count.getAndIncrement(), d));
+                    Map<Long, String> query2Map = CSVReader.departmentInProv(arguments.getInputPath(), arguments.getProvince());
                     IMap<Long,String> map2 = client.getMap("departments");
                     map2.clear();
                     logger.info("Start loading remote data");
@@ -104,10 +99,7 @@ public class Client {
 
                 case 3:
                     logger.info("Creating local map with data");
-                    HashMap<Long, Pair<ActivityCondition, String>> auxMap = new HashMap<>();
-                    CSVReader.getConditionByRegion(arguments.getInputPath())
-                            .stream()
-                            .forEach(p -> auxMap.put(count.getAndIncrement(), p));
+                    Map<Long, Pair<ActivityCondition, String>> auxMap = CSVReader.getConditionByRegion(arguments.getInputPath());
                     IMap<Long, Pair<ActivityCondition, String>> map3 = client.getMap("activityConditions");
                     logger.info("Start loading remote data");
                     map3.putAll(auxMap);
@@ -134,10 +126,8 @@ public class Client {
                     logger.info("Creating local map with data");
                     final IMap<Long,Pair<String,String>> map7 = client.getMap(mapName);
                     map7.clear();
-                    final Map<Long,Pair<String,String>> query7Map = new HashMap<>();
                     timer.start();
-                    CSVReader.getDepartmentsAndProvinces(arguments.getInputPath()).stream()
-                        .forEach(p -> query7Map.put(count.getAndIncrement(),p));
+                    final Map<Long,Pair<String,String>> query7Map = CSVReader.getDepartmentsAndProvinces(arguments.getInputPath());
                     logger.info("Reading data took: " + timer);
                     timer.stop().reset();
                     timer.start();

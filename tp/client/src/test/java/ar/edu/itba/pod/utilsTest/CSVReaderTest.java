@@ -7,6 +7,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Collection;
+import java.util.Map;
 
 public class CSVReaderTest {
 
@@ -14,9 +15,9 @@ public class CSVReaderTest {
     public void CSVReaderHappyTest() {
         final String path = "./src/main/resources/census100.csv";
         Person p = new Person(ActivityCondition.values()[1],12170685,"Río Grande","Tierra del Fuego");
-        Collection<Person> people = CSVReader.getPeople(path);
+        Map<Long,Person> people = CSVReader.getPeople(path);
         Assert.assertEquals(100, people.size());
-        Assert.assertTrue(people.contains(p));
+        Assert.assertTrue(people.containsValue(p));
 
     }
 
