@@ -36,6 +36,7 @@ public class Server {
 
                 .setInstanceName("TPE-Cluster")
                 .addMapConfig(new MapConfig().setName("people"))
+                .addMapConfig(new MapConfig().setName("departments"))
                 .addMultiMapConfig(new MultiMapConfig().setName("people"));
 
 

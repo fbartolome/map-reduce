@@ -66,14 +66,14 @@ public class CLIParser {
             if(cmd.hasOption(amountArg)) {
                 arguments.setAmount(Integer.parseInt(cmd.getOptionValue(amountArg)));
             } else {
-                if(queryNumber==2 || queryNumber==6 || queryNumber==7) throw new IllegalStateException("There has to be an amount argument for query " + queryNumber);
+                if(queryNumber==2 || queryNumber==6 || queryNumber==7) throw new IllegalStateException("There has to be an amount argument for query, add it with -Dn " + queryNumber);
 
             }
 
             if(cmd.hasOption(provinceArg)) {
                 arguments.setProvince(cmd.getOptionValue(provinceArg));
             } else {
-                if(queryNumber==2) throw new IllegalStateException("There has to be a province argument for query " + queryNumber);
+                if(queryNumber==2) throw new IllegalStateException("There has to be a province argument for query, add it with -Dprov " + queryNumber);
 
             }
 
