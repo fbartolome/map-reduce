@@ -107,11 +107,35 @@ public class Client {
                     break;
 
                 case 4:
+                    logger.info("Creating local map with data");
+                    final IMap<Integer,String> map4 = client.getMap(mapName);
+                    map4.clear();
+                    Map<Integer,String> otherMap4 = new HashMap();
+                    CSVReader.getHomesByRegionRawData(arguments.getInputPath()).stream()
+                        .forEach(r -> otherMap4.put(r.getKey(),r.getValue()));
+                    logger.info("Start loading remote data");
+                    map4.putAll(otherMap4);
+                    logger.info("Finished loading remote data");
                     query = new QueryManager.FourthQuery();
+                    Job <Integer,String> job4 = jobTracker.newJob(KeyValueSource.fromMap(map4));
+                    query.output(writer, query.getFuture(job4).get());
+                    logger.info("Finished writing output");
                     break;
 
                 case 5:
+                    logger.info("Creating local map with data");
+                    final IMap<Integer,String> map5 = client.getMap(mapName);
+                    map5.clear();
+                    Map<Integer,String> otherMap5 = new HashMap();
+                    CSVReader.getHomesByRegionRawData(arguments.getInputPath()).stream()
+                        .forEach(r -> otherMap5.put(r.getKey(),r.getValue()));
+                    logger.info("Start loading remote data");
+                    map5.putAll(otherMap5);
+                    logger.info("Finished loading remote data");
                     query = new QueryManager.FifthQuery();
+                    Job <Integer,String> job5 = jobTracker.newJob(KeyValueSource.fromMap(map5));
+                    query.output(writer, query.getFuture(job5).get());
+                    logger.info("Finished writing output");
                     break;
 
                 case 6:

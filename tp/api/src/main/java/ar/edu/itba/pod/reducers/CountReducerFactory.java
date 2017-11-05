@@ -3,18 +3,18 @@ package ar.edu.itba.pod.reducers;
 import com.hazelcast.mapreduce.Reducer;
 import com.hazelcast.mapreduce.ReducerFactory;
 
-public class CountReducerFactory<K> implements ReducerFactory<K,Long,Long> {
+public class CountReducerFactory<K> implements ReducerFactory<K,Integer,Long> {
     @Override
-    public Reducer<Long, Long> newReducer(K k) {
+    public Reducer<Integer, Long> newReducer(K k) {
         return new CountReducer();
     }
 
-    private class CountReducer extends Reducer<Long, Long> {
+    private class CountReducer extends Reducer<Integer, Long> {
         private volatile long count = 0;
 
         @Override
-        public void reduce(Long aLong) {
-            count += aLong;
+        public void reduce(Integer integer) {
+            count += integer;
         }
 
         @Override

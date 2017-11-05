@@ -64,7 +64,6 @@ public class QueryManager {
         @Override
         public ICompletableFuture<List<Entry<String, Long>>> getFuture(Job<Long, String> job) {
             return job
-                   // .keyPredicate(new ProvinceKeyPredicate(Client.mapName, prov))
                     .mapper(new MostInhabitedProvinceDeptsMapper())
                     .reducer(new CountReducerFactory<>())
                     .submit(new TopAndOrderByCollator<>(n, false, false));
@@ -92,13 +91,13 @@ public class QueryManager {
         }
     }
 
-    static public class FourthQuery implements Query<Long,Person,List<Entry<String,Long>>> {
+    static public class FourthQuery implements Query<Integer,String,List<Entry<String,Long>>> {
 
         @Override
-        public ICompletableFuture<List<Entry<String, Long>>> getFuture(Job<Long, Person> job) {
+        public ICompletableFuture<List<Entry<String, Long>>> getFuture(Job<Integer, String> job) {
             return job
                     .mapper(new HomesByRegionMapper())
-                    .reducer(new HomesByRegionReducerFactory())
+                    .reducer(new CountReducerFactory())
                     .submit(new OrderByCollator(false, false));
         }
 
@@ -112,10 +111,12 @@ public class QueryManager {
 
         @Override
         public ICompletableFuture<List<Entry<String, Double>>> getFuture(Job<Long, Person> job) {
-            return job
-                    .mapper(new HomesByRegionMapper())
-                    .reducer(new AvgInhabitantsPerHouseholdByRegionReducerFactory())
-                    .submit(new OrderByCollator(false, false));
+            //FIXME
+            return null;
+//            return job
+//                    .mapper(new HomesByRegionMapper())
+//                    .reducer(new AvgInhabitantsPerHouseholdByRegionReducerFactory())
+//                    .submit(new OrderByCollator(false, false));
         }
 
         @Override
