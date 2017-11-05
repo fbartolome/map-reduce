@@ -7,7 +7,6 @@ import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.client.config.ClientConfig;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
-import com.hazelcast.core.MultiMap;
 import com.hazelcast.mapreduce.Job;
 import com.hazelcast.mapreduce.JobTracker;
 import com.hazelcast.mapreduce.KeyValueSource;
@@ -17,7 +16,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -127,7 +128,20 @@ public class Client {
                     break;
 
                 case 6:
+                    logger.info("Creating local map with data");
+                    HashMap<Long, Pair<String, String>> auxMap6 = new HashMap<>();
+                    CSVReader.getDepartmentsAndProvinces(arguments.getInputPath())
+                            .stream()
+                            .forEach(p -> auxMap6.put(count.getAndIncrement(), p));
+                    IMap<Long, Pair<String, String>> map6 = client.getMap("dept");
+                    logger.info("Start loading remote data");
+                    map6.putAll(auxMap6);
+                    logger.info("Finished loading remote data");
+                    Job<Long, Pair<String, String>> job6 = jobTracker.newJob(KeyValueSource.fromMap(map6));
                     query = new QueryManager.SixthQuery(arguments.getAmount());
+                    logger.debug("anda");
+                    query.output(writer, query.getFuture(job6).get());
+                    logger.info("Finished writing output");
                     break;
 
                 case 7:

@@ -124,7 +124,7 @@ public class QueryManager {
         }
     }
 
-    static public class SixthQuery implements Query<Long,Person,List<Entry<String,Integer>>> {
+    static public class SixthQuery implements Query<Long,Pair<String, String>,List<Entry<String,Integer>>> {
         private int n;
 
         public SixthQuery(int n) {
