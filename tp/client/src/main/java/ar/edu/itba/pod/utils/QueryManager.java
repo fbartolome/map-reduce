@@ -1,10 +1,8 @@
 package ar.edu.itba.pod.utils;
 
-import ar.edu.itba.pod.client.Client;
 import ar.edu.itba.pod.collators.MinAmountAndOrderCollator;
 import ar.edu.itba.pod.collators.OrderByCollator;
 import ar.edu.itba.pod.collators.TopAndOrderByCollator;
-import ar.edu.itba.pod.keyPredicates.ProvinceKeyPredicate;
 import ar.edu.itba.pod.mappers.*;
 import ar.edu.itba.pod.model.Person;
 import ar.edu.itba.pod.reducers.*;
@@ -33,10 +31,10 @@ public class QueryManager {
         writer.flush();
     }
 
-    static public class FirstQuery implements Query<String,String,List<Entry<String,Long>>> {
+    static public class FirstQuery implements Query<Long,String,List<Entry<String,Long>>> {
 
         @Override
-        public ICompletableFuture<List<Entry<String, Long>>> getFuture(Job<String, String> job) {
+        public ICompletableFuture<List<Entry<String, Long>>> getFuture(Job<Long, String> job) {
             logger.debug("getFuture in first Query");
             return job
                     .mapper(new InhabitantsByRegionMapper())
@@ -51,7 +49,7 @@ public class QueryManager {
         }
     }
 
-    static public class SecondQuery implements Query<Long,Person,List<Entry<String,Long>>> {
+    static public class SecondQuery implements Query<Long,String,List<Entry<String,Long>>> {
 
         private int n;
         private String prov;
@@ -62,9 +60,9 @@ public class QueryManager {
         }
 
         @Override
-        public ICompletableFuture<List<Entry<String, Long>>> getFuture(Job<Long, Person> job) {
+        public ICompletableFuture<List<Entry<String, Long>>> getFuture(Job<Long, String> job) {
             return job
-                    .keyPredicate(new ProvinceKeyPredicate(Client.mapName, prov))
+                   // .keyPredicate(new ProvinceKeyPredicate(Client.mapName, prov))
                     .mapper(new MostInhabitedProvinceDeptsMapper())
                     .reducer(new CountReducerFactory<>())
                     .submit(new TopAndOrderByCollator<>(n, false, false));
