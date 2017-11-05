@@ -11,6 +11,9 @@ import com.hazelcast.core.MultiMap;
 import com.hazelcast.mapreduce.Job;
 import com.hazelcast.mapreduce.JobTracker;
 import com.hazelcast.mapreduce.KeyValueSource;
+import java.util.HashMap;
+import java.util.Map;
+import org.omg.CosNaming.NamingContextExtPackage.StringNameHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +43,7 @@ public class Client {
         List<String> addresses = new ArrayList<>();
 
         addresses.add("127.0.0.1");
-        addresses.add("10.2.69.200");
+//        addresses.add("10.2.69.200");
 
 //        ccfg.getNetworkConfig().setAddresses(Arrays.asList(arguments.getIps()));
 
@@ -51,11 +54,11 @@ public class Client {
         final HazelcastInstance client = HazelcastClient.newHazelcastClient(ccfg);
 
         //TODO: no necesariamente es un mapa
-        IMap<Long,Person> map = client.getMap(mapName);
+//        IMap<Long,Person> map = client.getMap(mapName);
         final AtomicLong count = new AtomicLong(0);
 
         //"./client/src/main/resources/census100.csv"
-        CSVReader.readCSV(arguments.getInputPath()).stream().forEach(p -> map.put(count.getAndIncrement(), p));
+//        CSVReader.readCSV(arguments.getInputPath()).stream().forEach(p -> map.put(count.getAndIncrement(), p));
 
 
         JobTracker jobTracker = client.getJobTracker("tracker");
@@ -69,12 +72,15 @@ public class Client {
             switch (arguments.getQueryNumber()) {
 
                 case 1:
-                    final IList<String> list = client.getList(mapName);
-                    list.clear();
+                    final IMap<Long,String> map = client.getMap(mapName);
+                    map.clear();
+                    Map<Long,String> otherMap = new HashMap();
+                    //TODO: change reading
                     CSVReader.readCSV(arguments.getInputPath()).stream()
-                        .forEach(p -> list.add(p.getRegion()));
+                        .forEach(p -> otherMap.put(count.getAndIncrement(),p.getRegion()));
+                    map.putAll(otherMap);
                     query = new QueryManager.FirstQuery();
-                    Job <String,String> job1 = jobTracker.newJob(KeyValueSource.fromList(list));
+                    Job <Long,String> job1 = jobTracker.newJob(KeyValueSource.fromMap(map));
                     query.output(writer, query.getFuture(job1).get());
                     break;
 

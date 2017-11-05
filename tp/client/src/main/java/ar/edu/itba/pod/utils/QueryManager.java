@@ -33,10 +33,10 @@ public class QueryManager {
         writer.flush();
     }
 
-    static public class FirstQuery implements Query<String,String,List<Entry<String,Long>>> {
+    static public class FirstQuery implements Query<Long,String,List<Entry<String,Long>>> {
 
         @Override
-        public ICompletableFuture<List<Entry<String, Long>>> getFuture(Job<String, String> job) {
+        public ICompletableFuture<List<Entry<String, Long>>> getFuture(Job<Long, String> job) {
             logger.debug("getFuture in first Query");
             return job
                     .mapper(new InhabitantsByRegionMapper())
