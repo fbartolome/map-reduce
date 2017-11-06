@@ -17,7 +17,7 @@ public class InhabitantsPerHouseholdByRegionReducerFactory implements ReducerFac
 
     private class InhabitantsPerHouseholdByRegionReducer extends Reducer<Integer, Double>{
         private Set<Integer> set = new HashSet<>();
-        private Double population = new Double(0);
+        private Long population = new Long(0);
 
         @Override
         public void reduce(Integer houseId) {

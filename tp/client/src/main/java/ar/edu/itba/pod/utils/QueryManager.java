@@ -3,6 +3,7 @@ package ar.edu.itba.pod.utils;
 import ar.edu.itba.pod.collators.MinAmountAndOrderCollator;
 import ar.edu.itba.pod.collators.OrderByCollator;
 import ar.edu.itba.pod.collators.TopAndOrderByCollator;
+import ar.edu.itba.pod.combiners.UnemploymentByRegionCombinerFactory;
 import ar.edu.itba.pod.mappers.DepartmentAndProvinceByInhabitantMapper;
 import ar.edu.itba.pod.mappers.KeyValueMapper;
 import ar.edu.itba.pod.mappers.MostSharingDeptsProvsMapper;
@@ -18,9 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Function;
 
@@ -114,8 +113,13 @@ public class QueryManager {
         public ICompletableFuture<List<Entry<Character, Double>>> getFuture(Job<Long, Pair<Character, ActivityCondition>> job) {
             return job
                     .mapper(new KeyValueMapper())
-                    .reducer(new UnemploymentByRegionReducerFactory())
+                    .combiner(new UnemploymentByRegionCombinerFactory())
+                    .reducer(new Query3ReducerFactory())
                     .submit(new OrderByCollator(false, false));
+//            return job
+//                    .mapper(new KeyValueMapper())
+//                    .reducer(new UnemploymentByRegionReducerFactory())
+//                    .submit(new OrderByCollator(false, false));
         }
 
         @Override

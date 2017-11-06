@@ -1,12 +1,11 @@
 package ar.edu.itba.pod.model;
 
-import java.io.IOException;
 import java.io.Serializable;
 
 public class Pair<K,V> implements Serializable {
 
-  private final K key;
-  private final V value;
+  private K key;
+  private V value;
 
   public Pair(final K key, final V value) {
     this.key = key;
@@ -19,6 +18,14 @@ public class Pair<K,V> implements Serializable {
 
   public V getValue() {
     return value;
+  }
+
+  public void setKey(K key) {
+    this.key = key;
+  }
+
+  public void setValue(V value) {
+    this.value = value;
   }
 
   @Override
