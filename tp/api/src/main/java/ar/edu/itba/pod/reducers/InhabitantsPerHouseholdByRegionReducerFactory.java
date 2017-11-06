@@ -5,16 +5,13 @@ import com.hazelcast.mapreduce.ReducerFactory;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
-public class InhabitantsPerHouseholdByRegionReducerFactory implements ReducerFactory<String, Integer, Double> {
+public class InhabitantsPerHouseholdByRegionReducerFactory implements ReducerFactory<Character,Integer,Double> {
 
     @Override
-    public Reducer<Integer, Double> newReducer(String s) {
+    public Reducer<Integer, Double> newReducer(Character s) {
         return new InhabitantsPerHouseholdByRegionReducer();
     }
 

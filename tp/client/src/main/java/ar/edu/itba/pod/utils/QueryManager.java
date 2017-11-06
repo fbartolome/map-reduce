@@ -3,10 +3,11 @@ package ar.edu.itba.pod.utils;
 import ar.edu.itba.pod.collators.MinAmountAndOrderCollator;
 import ar.edu.itba.pod.collators.OrderByCollator;
 import ar.edu.itba.pod.collators.TopAndOrderByCollator;
-import ar.edu.itba.pod.mappers.*;
+import ar.edu.itba.pod.mappers.DepartmentAndProvinceByInhabitantMapper;
+import ar.edu.itba.pod.mappers.KeyValueMapper;
+import ar.edu.itba.pod.mappers.UnitMapper;
 import ar.edu.itba.pod.model.ActivityCondition;
 import ar.edu.itba.pod.model.Pair;
-import ar.edu.itba.pod.model.Person;
 import ar.edu.itba.pod.model.RegionMapper;
 import ar.edu.itba.pod.reducers.*;
 import com.hazelcast.core.ICompletableFuture;
@@ -14,7 +15,6 @@ import com.hazelcast.mapreduce.Job;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.plaf.synth.Region;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map.Entry;
@@ -28,7 +28,7 @@ public class QueryManager {
         return e.getKey() + "," + e.getValue() + "\n";
     }
 
-    private static <T,U> String regionFommater(Entry<T,U> e) {
+    private static <T,U> String regionFormatter(Entry<T,U> e) {
         return RegionMapper.getRegion((Character)e.getKey()) + "," + e.getValue() + "\n";
     }
 
@@ -53,7 +53,7 @@ public class QueryManager {
         @Override
         public void output(PrintWriter writer, List<Entry<Character, Long>> response) {
             logger.debug("output first query");
-            QueryManager.output(writer, response, QueryManager::regionFommater);
+            QueryManager.output(writer, response, QueryManager::regionFormatter);
         }
     }
 
@@ -81,10 +81,10 @@ public class QueryManager {
         }
     }
 
-    static public class ThirdQuery implements Query<Long, Pair<String, ActivityCondition>,List<Entry<String,Double>>> {
+    static public class ThirdQuery implements Query<Long, Pair<Character, ActivityCondition>,List<Entry<Character,Double>>> {
 
         @Override
-        public ICompletableFuture<List<Entry<String, Double>>> getFuture(Job<Long, Pair<String, ActivityCondition>> job) {
+        public ICompletableFuture<List<Entry<Character, Double>>> getFuture(Job<Long, Pair<Character, ActivityCondition>> job) {
             return job
                     .mapper(new KeyValueMapper())
                     .reducer(new UnemploymentByRegionReducerFactory())
@@ -92,15 +92,15 @@ public class QueryManager {
         }
 
         @Override
-        public void output(PrintWriter writer, List<Entry<String, Double>> response) {
-            QueryManager.output(writer, response, QueryManager::defaultFormatter);
+        public void output(PrintWriter writer, List<Entry<Character, Double>> response) {
+            QueryManager.output(writer, response, QueryManager::regionFormatter);
         }
     }
 
-    static public class FourthQuery implements Query<Integer,String,List<Entry<String,Long>>> {
+    static public class FourthQuery implements Query<Integer,Character,List<Entry<Character,Long>>> {
 
         @Override
-        public ICompletableFuture<List<Entry<String, Long>>> getFuture(Job<Integer, String> job) {
+        public ICompletableFuture<List<Entry<Character, Long>>> getFuture(Job<Integer, Character> job) {
             return job
                     .mapper(new UnitMapper())
                     .reducer(new CountReducerFactory())
@@ -108,15 +108,15 @@ public class QueryManager {
         }
 
         @Override
-        public void output(PrintWriter writer, List<Entry<String, Long>> response) {
-            QueryManager.output(writer, response, QueryManager::defaultFormatter);
+        public void output(PrintWriter writer, List<Entry<Character, Long>> response) {
+            QueryManager.output(writer, response, QueryManager::regionFormatter);
         }
     }
 
-    static public class FifthQuery implements Query<Long,Pair<String,Integer>,List<Entry<String,Double>>> {
+    static public class FifthQuery implements Query<Long,Pair<Character,Integer>,List<Entry<Character,Double>>> {
 
         @Override
-        public ICompletableFuture<List<Entry<String, Double>>> getFuture(Job<Long,Pair<String,Integer>> job) {
+        public ICompletableFuture<List<Entry<Character, Double>>> getFuture(Job<Long,Pair<Character,Integer>> job) {
             return job
                     .mapper(new KeyValueMapper())
                     .reducer(new InhabitantsPerHouseholdByRegionReducerFactory())
@@ -124,12 +124,12 @@ public class QueryManager {
         }
 
         @Override
-        public void output(PrintWriter writer, List<Entry<String, Double>> response) {
-            QueryManager.output(writer, response, QueryManager::defaultFormatter);
+        public void output(PrintWriter writer, List<Entry<Character, Double>> response) {
+            QueryManager.output(writer, response, QueryManager::regionFormatter);
         }
     }
 
-    static public class SixthQuery implements Query<Long,Pair<String, String>,List<Entry<String,Integer>>> {
+    static public class SixthQuery implements Query<Long,Pair<String, Character>,List<Entry<String,Integer>>> {
         private int n;
 
         public SixthQuery(int n) {
@@ -137,9 +137,9 @@ public class QueryManager {
         }
 
         @Override
-        public ICompletableFuture<List<Entry<String, Integer>>> getFuture(Job<Long, Pair<String, String>> job) {
+        public ICompletableFuture<List<Entry<String, Integer>>> getFuture(Job<Long, Pair<String, Character>> job) {
             return job
-                    .mapper(new KeyValueMapper())
+                    .mapper(new DepartmentAndProvinceByInhabitantMapper())
                     .reducer(new CountReducerFactory())
                     .submit(new MinAmountAndOrderCollator(false, false, n));
         }
@@ -151,7 +151,7 @@ public class QueryManager {
     }
 
 
-    static public class SeventhQuery implements Query<Long,Pair<String,String>,List<Entry<String,Integer>>> {
+    static public class SeventhQuery implements Query<Long,Pair<String,Character>,List<Entry<String,Integer>>> {
         private int n;
 
         public SeventhQuery(int n) {
@@ -159,7 +159,7 @@ public class QueryManager {
         }
 
         @Override
-        public ICompletableFuture<List<Entry<String, Integer>>> getFuture(Job<Long,Pair<String,String>> job) {
+        public ICompletableFuture<List<Entry<String, Integer>>> getFuture(Job<Long,Pair<String,Character>> job) {
             return job
                 .mapper(new KeyValueMapper())
                 .reducer(new MostSharingDeptsProvsReducerFactory())
