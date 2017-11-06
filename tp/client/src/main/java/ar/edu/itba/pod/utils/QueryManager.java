@@ -39,6 +39,12 @@ public class QueryManager {
         writer.flush();
     }
 
+    /**
+     * Key in: id
+     * Value in: region
+     * Key out: region
+     * Value in: people in region
+     */
     static public class FirstQuery implements Query<Long,Character,List<Entry<Character,Long>>> {
 
         @Override
@@ -57,6 +63,12 @@ public class QueryManager {
         }
     }
 
+    /**
+     * Key in: id
+     * Value in: department
+     * Key out: department
+     * Value in: people in department
+     */
     static public class SecondQuery implements Query<Long,String,List<Entry<String,Long>>> {
 
         private int n;
@@ -81,6 +93,12 @@ public class QueryManager {
         }
     }
 
+    /**
+     * Key in: id
+     * Value in: pair of region and activity condition
+     * Key out: region
+     * Value in: unemployment index
+     */
     static public class ThirdQuery implements Query<Long, Pair<Character, ActivityCondition>,List<Entry<Character,Double>>> {
 
         @Override
@@ -97,6 +115,12 @@ public class QueryManager {
         }
     }
 
+    /**
+     * Key in: household id
+     * Value in: region
+     * Key out: region
+     * Value in: households in region
+     */
     static public class FourthQuery implements Query<Integer,Character,List<Entry<Character,Long>>> {
 
         @Override
@@ -113,6 +137,12 @@ public class QueryManager {
         }
     }
 
+    /**
+     * Key in: id
+     * Value in: pair of region and household id
+     * Key out: region
+     * Value in: people per household
+     */
     static public class FifthQuery implements Query<Long,Pair<Character,Integer>,List<Entry<Character,Double>>> {
 
         @Override
@@ -129,6 +159,12 @@ public class QueryManager {
         }
     }
 
+    /**
+     * Key in: id
+     * Value in: pair of department and province
+     * Key out: department
+     * Value in: amount of provinces
+     */
     static public class SixthQuery implements Query<Long,Pair<String, Character>,List<Entry<String,Integer>>> {
         private int n;
 
@@ -151,6 +187,12 @@ public class QueryManager {
     }
 
 
+    /**
+     * Key in: id
+     * Value in: pair of department and province
+     * Key out: province 1 + province 2
+     * Value in: amount of departments
+     */
     static public class SeventhQuery implements Query<Long,Pair<String,Character>,List<Entry<String,Integer>>> {
         private int n;
 
