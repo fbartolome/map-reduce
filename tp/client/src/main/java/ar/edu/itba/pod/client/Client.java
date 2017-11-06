@@ -6,6 +6,7 @@ import ar.edu.itba.pod.utils.*;
 import com.google.common.base.Stopwatch;
 import com.hazelcast.client.HazelcastClient;
 import com.hazelcast.client.config.ClientConfig;
+import com.hazelcast.config.GroupConfig;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.hazelcast.mapreduce.Job;
@@ -21,7 +22,6 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicLong;
 
 public class Client {
     private static Logger logger = LoggerFactory.getLogger(Client.class);
@@ -33,8 +33,12 @@ public class Client {
         CLIParser cli = new CLIParser(args);
         ConsoleArguments arguments = cli.parse();
 
-        final ClientConfig ccfg = new ClientConfig();
-        ccfg.getNetworkConfig().setAddresses(Arrays.asList(arguments.getIps()));
+        final ClientConfig ccfg = new ClientConfig()
+                .setGroupConfig(new GroupConfig()
+                        .setName("GRU1")
+                        .setPassword("GRU1PASS"));
+        ccfg.getNetworkConfig()
+                .setAddresses(Arrays.asList(arguments.getIps()));
         final HazelcastInstance client = HazelcastClient.newHazelcastClient(ccfg);
 
         JobTracker jobTracker = client.getJobTracker("tracker");

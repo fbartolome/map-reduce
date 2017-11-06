@@ -49,7 +49,6 @@ public class QueryManager {
 
         @Override
         public ICompletableFuture<List<Entry<Character, Long>>> getFuture(Job<Long, Character> job) {
-            logger.debug("getFuture in first Query");
             return job
                     .mapper(new UnitMapper())
                     .reducer(new CountReducerFactory())
@@ -58,7 +57,6 @@ public class QueryManager {
 
         @Override
         public void output(PrintWriter writer, List<Entry<Character, Long>> response) {
-            logger.debug("output first query");
             QueryManager.output(writer, response, QueryManager::regionFormatter);
         }
     }
