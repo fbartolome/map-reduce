@@ -21,9 +21,10 @@ public class ProvinceKeyPredicate implements KeyPredicate<Long>, HazelcastInstan
 
     @Override
     public boolean evaluate(Long id) {
-        final Map<Long,Person> map = hazelcastInstance.getMap(mapName);
-        final Person person = map.get(id);
-        return person.getProvinceName().equalsIgnoreCase(province);
+        //IMap<Long, Pair<Character, ActivityCondition>>
+        final Map<Long,String> map = hazelcastInstance.getMap(mapName);
+        final String dept = map.get(id);
+        return dept.equalsIgnoreCase(province);
     }
 
     @Override
