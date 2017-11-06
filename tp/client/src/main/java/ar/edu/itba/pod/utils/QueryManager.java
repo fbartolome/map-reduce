@@ -3,6 +3,7 @@ package ar.edu.itba.pod.utils;
 import ar.edu.itba.pod.collators.MinAmountAndOrderCollator;
 import ar.edu.itba.pod.collators.OrderByCollator;
 import ar.edu.itba.pod.collators.TopAndOrderByCollator;
+import ar.edu.itba.pod.combiners.InhabitantsPerHouseholdByRegionCombinerFactory;
 import ar.edu.itba.pod.combiners.UnemploymentByRegionCombinerFactory;
 import ar.edu.itba.pod.mappers.DepartmentAndProvinceByInhabitantMapper;
 import ar.edu.itba.pod.mappers.KeyValueMapper;
@@ -162,8 +163,13 @@ public class QueryManager {
         public ICompletableFuture<List<Entry<Character, Double>>> getFuture(Job<Long,Pair<Character,Integer>> job) {
             return job
                     .mapper(new KeyValueMapper())
-                    .reducer(new InhabitantsPerHouseholdByRegionReducerFactory())
+                    .combiner(new InhabitantsPerHouseholdByRegionCombinerFactory())
+                    .reducer(new Query5ReducerFactory())
                     .submit(new OrderByCollator(false, false));
+//            return job
+//                    .mapper(new KeyValueMapper())
+//                    .reducer(new InhabitantsPerHouseholdByRegionReducerFactory())
+//                    .submit(new OrderByCollator(false, false));
         }
 
         @Override
