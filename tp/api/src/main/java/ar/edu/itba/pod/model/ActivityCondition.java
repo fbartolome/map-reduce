@@ -1,6 +1,8 @@
 package ar.edu.itba.pod.model;
 
-public class ActivityCondition {
+import java.io.Serializable;
+
+public class ActivityCondition implements Serializable {
     public static ActivityCondition NO_DATA = new ActivityCondition((char)0);
     public static ActivityCondition EMPLOYED = new ActivityCondition((char)1);
     public static ActivityCondition UNEMPLOYED = new ActivityCondition((char)2);
