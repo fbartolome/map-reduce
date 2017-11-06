@@ -22,21 +22,20 @@ public class AddCombinerFactory<T,N extends Number> implements CombinerFactory<T
   private final Number addNumbers(Number a, Number b) {
     if(a instanceof Double || b instanceof Double) {
       return new Double(a.doubleValue() + b.doubleValue());
-    } else if(a instanceof Float || b instanceof Float) {
-      return new Float(a.floatValue() + b.floatValue());
     } else if(a instanceof Long || b instanceof Long) {
       return new Long(a.longValue() + b.longValue());
+    } else if(a instanceof Float || b instanceof Float) {
+      return new Float(a.floatValue() + b.floatValue());
     } else {
       return new Integer(a.intValue() + b.intValue());
     }
   }
 
   private class AddCombiner extends Combiner<N, N> {
-    //TODO: synchronize?
     private N sum = resetValue;
 
     @Override
-    public void combine(N t) {
+    public synchronized void combine(N t) {
       sum = (N) addNumbers(sum,t);
     }
 
