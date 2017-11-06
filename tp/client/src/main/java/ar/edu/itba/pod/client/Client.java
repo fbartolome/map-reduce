@@ -45,8 +45,7 @@ public class Client {
 
         Stopwatch timer = Stopwatch.createUnstarted();
         try {
-            //TODO Add parameter file path.
-            FileWriter fw = new FileWriter("myfile.txt", true);
+            FileWriter fw = new FileWriter(arguments.getTimeOutPath(), true);
             BufferedWriter bw = new BufferedWriter(fw);
             PrintWriter timerFile = new PrintWriter(bw);
 
