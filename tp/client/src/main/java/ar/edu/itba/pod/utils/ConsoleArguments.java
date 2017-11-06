@@ -7,7 +7,7 @@ public class ConsoleArguments {
     private String inputPath;
     private String outPath;
     private String timeOutPath;
-    private int amount;
+    private Integer amount;
     private String province;
 
     public ConsoleArguments(String[] ips, int queryNumber, String inputPath, String outPath, String timeOutPath) {
@@ -18,7 +18,7 @@ public class ConsoleArguments {
         this.timeOutPath = timeOutPath;
     }
 
-    public void setAmount(int amount) {
+    public void setAmount(Integer amount) {
         if(queryNumber!=2 && queryNumber!=6 && queryNumber!=7) throw new IllegalStateException("There is no amount in query " + queryNumber);
         this.amount = amount;
     }
@@ -48,7 +48,7 @@ public class ConsoleArguments {
         return timeOutPath;
     }
 
-    public int getAmount() {
+    public Integer getAmount() {
         if(queryNumber!=2 && queryNumber!=6 && queryNumber!=7) throw new IllegalStateException("There is no amount in query " + queryNumber);
 
         return amount;

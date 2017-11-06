@@ -5,9 +5,11 @@ import ar.edu.itba.pod.collators.OrderByCollator;
 import ar.edu.itba.pod.collators.TopAndOrderByCollator;
 import ar.edu.itba.pod.mappers.DepartmentAndProvinceByInhabitantMapper;
 import ar.edu.itba.pod.mappers.KeyValueMapper;
+import ar.edu.itba.pod.mappers.MostSharingDeptsProvsMapper;
 import ar.edu.itba.pod.mappers.UnitMapper;
 import ar.edu.itba.pod.model.ActivityCondition;
 import ar.edu.itba.pod.model.Pair;
+import ar.edu.itba.pod.model.ProvinceMapper;
 import ar.edu.itba.pod.model.RegionMapper;
 import ar.edu.itba.pod.reducers.*;
 import com.hazelcast.core.ICompletableFuture;
@@ -16,7 +18,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Function;
 
@@ -30,6 +34,13 @@ public class QueryManager {
 
     private static <T,U> String regionFormatter(Entry<T,U> e) {
         return RegionMapper.getRegion((Character)e.getKey()) + "," + e.getValue() + "\n";
+    }
+
+    private static <T,U> String provinceSumFormatter(Entry<Pair<Character, Character>,U> e) {
+        return
+                ProvinceMapper.getProvince(e.getKey().getKey()) + " + " +
+                        ProvinceMapper.getProvince(e.getKey().getValue()) +
+                        "," + e.getValue() + "\n";
     }
 
     private static <T,U> void output(PrintWriter writer, List<Entry<T,U>> response, Function<Entry<T,U>, String> formatter) {
@@ -188,27 +199,27 @@ public class QueryManager {
     /**
      * Key in: id
      * Value in: pair of department and province
-     * Key out: province 1 + province 2
+     * Key out: Pair of province 1 and province 2
      * Value in: amount of departments
      */
-    static public class SeventhQuery implements Query<Long,Pair<String,Character>,List<Entry<String,Integer>>> {
-        private int n;
+    static public class SeventhQuery implements Query<Long,Pair<String,Character>,List<Entry<Pair<Character,Character>,Integer>>> {
+        private Integer n;
 
-        public SeventhQuery(int n) {
+        public SeventhQuery(Integer n) {
             this.n = n;
         }
 
         @Override
-        public ICompletableFuture<List<Entry<String, Integer>>> getFuture(Job<Long,Pair<String,Character>> job) {
+        public ICompletableFuture<List<Entry<Pair<Character,Character>, Integer>>> getFuture(Job<Long,Pair<String,Character>> job) {
             return job
-                .mapper(new KeyValueMapper())
+                .mapper(new MostSharingDeptsProvsMapper())
                 .reducer(new MostSharingDeptsProvsReducerFactory())
                 .submit(new MinAmountAndOrderCollator(false,false,n));
         }
 
         @Override
-        public void output(PrintWriter writer, List<Entry<String, Integer>> response) {
-            QueryManager.output(writer, response, QueryManager::defaultFormatter);
+        public void output(PrintWriter writer, List<Entry<Pair<Character,Character>, Integer>> response) {
+            QueryManager.output(writer, response, QueryManager::provinceSumFormatter);
         }
     }
 

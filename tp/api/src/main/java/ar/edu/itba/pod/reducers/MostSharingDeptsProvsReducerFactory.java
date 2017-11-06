@@ -1,21 +1,22 @@
 package ar.edu.itba.pod.reducers;
 
+import ar.edu.itba.pod.model.Pair;
 import com.hazelcast.mapreduce.Reducer;
 import com.hazelcast.mapreduce.ReducerFactory;
 import java.util.HashSet;
 import java.util.Set;
 
-public class MostSharingDeptsProvsReducerFactory implements ReducerFactory<String,String,Integer> {
+public class MostSharingDeptsProvsReducerFactory implements ReducerFactory<Pair<Character,Character>,String,Long> {
 
   @Override
-  public Reducer<String, Integer> newReducer(String s) {
+  public Reducer<String, Long> newReducer(Pair<Character, Character> s) {
     return new MostSharingDeptsProvsReducer();
   }
 
-  private class MostSharingDeptsProvsReducer extends Reducer<String, Integer> {
+  private class MostSharingDeptsProvsReducer extends Reducer<String,Long> {
 
-    private int count = 0;
-    private Set<String> set = new HashSet<>();
+    private Long count = 0L;
+    private Set<String> set = new HashSet<String>();
 
     @Override
     public synchronized void reduce(String department) {
@@ -27,7 +28,7 @@ public class MostSharingDeptsProvsReducerFactory implements ReducerFactory<Strin
     }
 
     @Override
-    public Integer finalizeReduce() {
+    public Long finalizeReduce() {
       return count;
     }
   }
