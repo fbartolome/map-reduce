@@ -1,8 +1,8 @@
 package ar.edu.itba.pod.mappers;
 
+import ar.edu.itba.pod.model.Pair;
 import com.hazelcast.mapreduce.Context;
 import com.hazelcast.mapreduce.Mapper;
-import javafx.util.Pair;
 
 public class KeyValueMapper <K,S,V> implements Mapper<K,Pair<S,V>,S,V> {
 

@@ -1,6 +1,7 @@
 package ar.edu.itba.pod.client;
 
 import ar.edu.itba.pod.model.ActivityCondition;
+import ar.edu.itba.pod.model.Pair;
 import ar.edu.itba.pod.utils.*;
 import com.google.common.base.Stopwatch;
 import com.hazelcast.client.HazelcastClient;
@@ -10,7 +11,6 @@ import com.hazelcast.core.IMap;
 import com.hazelcast.mapreduce.Job;
 import com.hazelcast.mapreduce.JobTracker;
 import com.hazelcast.mapreduce.KeyValueSource;
-import javafx.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

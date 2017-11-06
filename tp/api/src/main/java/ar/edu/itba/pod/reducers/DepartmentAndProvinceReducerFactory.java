@@ -2,7 +2,6 @@ package ar.edu.itba.pod.reducers;
 
 import com.hazelcast.mapreduce.Reducer;
 import com.hazelcast.mapreduce.ReducerFactory;
-import javafx.util.Pair;
 
 import java.util.HashSet;
 import java.util.Set;

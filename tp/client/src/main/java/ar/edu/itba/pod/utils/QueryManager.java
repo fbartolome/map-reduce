@@ -5,12 +5,12 @@ import ar.edu.itba.pod.collators.OrderByCollator;
 import ar.edu.itba.pod.collators.TopAndOrderByCollator;
 import ar.edu.itba.pod.mappers.*;
 import ar.edu.itba.pod.model.ActivityCondition;
+import ar.edu.itba.pod.model.Pair;
 import ar.edu.itba.pod.model.Person;
 import ar.edu.itba.pod.model.RegionMapper;
 import ar.edu.itba.pod.reducers.*;
 import com.hazelcast.core.ICompletableFuture;
 import com.hazelcast.mapreduce.Job;
-import javafx.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

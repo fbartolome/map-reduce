@@ -1,12 +1,12 @@
 package ar.edu.itba.pod.utils;
 
 import ar.edu.itba.pod.model.ActivityCondition;
+import ar.edu.itba.pod.model.Pair;
 import ar.edu.itba.pod.model.Person;
 import ar.edu.itba.pod.model.RegionMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ar.edu.itba.pod.model.Regions;
-import javafx.util.Pair;
 
 import java.io.*;
 import java.util.*;

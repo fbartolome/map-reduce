@@ -1,8 +1,8 @@
 package ar.edu.itba.pod.mappers;
 
+import ar.edu.itba.pod.model.Pair;
 import com.hazelcast.mapreduce.Context;
 import com.hazelcast.mapreduce.Mapper;
-import javafx.util.Pair;
 
 public class InhabitantsPerHouseholdByRegionMapper implements Mapper<Long,Pair<Integer,String>,String,Integer> {
 

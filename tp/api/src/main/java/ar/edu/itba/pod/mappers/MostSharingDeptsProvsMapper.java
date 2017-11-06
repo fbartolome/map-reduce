@@ -1,10 +1,10 @@
 package ar.edu.itba.pod.mappers;
 
+import ar.edu.itba.pod.model.Pair;
 import com.hazelcast.mapreduce.Context;
 import com.hazelcast.mapreduce.Mapper;
 import java.util.LinkedList;
 import java.util.List;
-import javafx.util.Pair;
 
 public class MostSharingDeptsProvsMapper implements Mapper<Long,Pair<String,String>,String,String> {
 
