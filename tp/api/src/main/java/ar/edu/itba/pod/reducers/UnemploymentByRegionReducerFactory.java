@@ -8,10 +8,10 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public class UnemploymentByRegionReducerFactory implements
-    ReducerFactory<String,ActivityCondition,Double> {
+        ReducerFactory<Character,ActivityCondition,Double> {
 
   @Override
-  public Reducer<ActivityCondition, Double> newReducer(String s) {
+  public Reducer<ActivityCondition, Double> newReducer(Character s) {
       return new UnemploymentByRegionReducer();
   }
 

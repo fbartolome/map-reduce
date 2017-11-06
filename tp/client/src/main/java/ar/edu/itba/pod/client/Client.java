@@ -19,7 +19,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
@@ -111,15 +110,15 @@ public class Client {
 
                 case 4:
                     logger.info("Creating local map with data");
-                    final IMap<Character,Integer> map4 = client.getMap(mapName);
+                    final IMap<Integer,Character> map4 = client.getMap(mapName);
                     map4.clear();
 
-                    Map<Character,Integer> otherMap4 = CSVReader.getHomesByHomeKey(arguments.getInputPath());
+                    Map<Integer,Character> otherMap4 = CSVReader.getHomesByHomeKey(arguments.getInputPath());
                     logger.info("Start loading remote data");
                     map4.putAll(otherMap4);
                     logger.info("Finished loading remote data");
                     query = new QueryManager.FourthQuery();
-                    Job <Character,Integer> job4 = jobTracker.newJob(KeyValueSource.fromMap(map4));
+                    Job <Integer,Character> job4 = jobTracker.newJob(KeyValueSource.fromMap(map4));
                     query.output(writer, query.getFuture(job4).get());
                     logger.info("Finished writing output");
                     break;

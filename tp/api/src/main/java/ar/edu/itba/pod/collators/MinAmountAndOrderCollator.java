@@ -15,9 +15,9 @@ public class MinAmountAndOrderCollator <K extends Comparable<K>>
     }
 
     @Override
-    public List<Map.Entry<K,Long>> collate(Iterable<Map.Entry<K, Long>> iterable) {
-        List<Map.Entry<K,Long>> ret = super.collate(iterable);
-        return ret.stream().filter(e -> e.getValue() > minAmount).collect(Collectors.toList());
+    public List<Map.Entry<K, Long>> collate(Iterable<Map.Entry<K, Long>> iterable) {
+        List<Map.Entry<K, Long>> ret = super.collate(iterable);
+        return ret.stream().filter(e -> e.getValue() >= minAmount).collect(Collectors.toList());
     }
 
 

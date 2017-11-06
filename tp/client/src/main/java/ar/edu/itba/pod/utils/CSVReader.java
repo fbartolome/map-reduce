@@ -1,13 +1,17 @@
 package ar.edu.itba.pod.utils;
 
 import ar.edu.itba.pod.model.*;
+import javafx.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javafx.util.Pair;
 
-import javax.swing.plaf.synth.Region;
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.LongAdder;
 
 public class CSVReader {
@@ -90,15 +94,15 @@ public class CSVReader {
         return query;
     }
 
-    public static Map<Character, Integer> getHomesByHomeKey(String path){
+    public static Map<Integer, Character> getHomesByHomeKey(String path){
         //read file into stream, try-with-resources
         logger.info("Start reading from CSV ...");
-        Map<Character, Integer> query = new HashMap<>();
+        Map<Integer, Character> query = new HashMap<>();
         try {
             try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
                 reader.lines().forEach(line -> {
                     String[] lineParts = line.split(",");
-                    query.put(RegionMapper.getKey(Regions.getRegion(lineParts[3])),Integer.valueOf(lineParts[1]));
+                    query.put(Integer.valueOf(lineParts[1]),RegionMapper.getKey(Regions.getRegion(lineParts[3])));
                 });
             }
 

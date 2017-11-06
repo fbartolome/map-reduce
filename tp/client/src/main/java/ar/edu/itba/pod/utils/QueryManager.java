@@ -3,9 +3,10 @@ package ar.edu.itba.pod.utils;
 import ar.edu.itba.pod.collators.MinAmountAndOrderCollator;
 import ar.edu.itba.pod.collators.OrderByCollator;
 import ar.edu.itba.pod.collators.TopAndOrderByCollator;
-import ar.edu.itba.pod.mappers.*;
+import ar.edu.itba.pod.mappers.DepartmentAndProvinceByInhabitantMapper;
+import ar.edu.itba.pod.mappers.KeyValueMapper;
+import ar.edu.itba.pod.mappers.UnitMapper;
 import ar.edu.itba.pod.model.ActivityCondition;
-import ar.edu.itba.pod.model.Person;
 import ar.edu.itba.pod.model.RegionMapper;
 import ar.edu.itba.pod.reducers.*;
 import com.hazelcast.core.ICompletableFuture;
@@ -14,7 +15,6 @@ import javafx.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.plaf.synth.Region;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map.Entry;
@@ -28,7 +28,7 @@ public class QueryManager {
         return e.getKey() + "," + e.getValue() + "\n";
     }
 
-    private static <T,U> String regionFommater(Entry<T,U> e) {
+    private static <T,U> String regionFormatter(Entry<T,U> e) {
         return RegionMapper.getRegion((Character)e.getKey()) + "," + e.getValue() + "\n";
     }
 
@@ -53,7 +53,7 @@ public class QueryManager {
         @Override
         public void output(PrintWriter writer, List<Entry<Character, Long>> response) {
             logger.debug("output first query");
-            QueryManager.output(writer, response, QueryManager::regionFommater);
+            QueryManager.output(writer, response, QueryManager::regionFormatter);
         }
     }
 
@@ -93,7 +93,7 @@ public class QueryManager {
 
         @Override
         public void output(PrintWriter writer, List<Entry<Character, Double>> response) {
-            QueryManager.output(writer, response, QueryManager::regionFommater);
+            QueryManager.output(writer, response, QueryManager::regionFormatter);
         }
     }
 
@@ -109,7 +109,7 @@ public class QueryManager {
 
         @Override
         public void output(PrintWriter writer, List<Entry<Character, Long>> response) {
-            QueryManager.output(writer, response, QueryManager::regionFommater);
+            QueryManager.output(writer, response, QueryManager::regionFormatter);
         }
     }
 
@@ -125,7 +125,7 @@ public class QueryManager {
 
         @Override
         public void output(PrintWriter writer, List<Entry<Character, Double>> response) {
-            QueryManager.output(writer, response, QueryManager::regionFommater);
+            QueryManager.output(writer, response, QueryManager::regionFormatter);
         }
     }
 
@@ -139,7 +139,7 @@ public class QueryManager {
         @Override
         public ICompletableFuture<List<Entry<String, Integer>>> getFuture(Job<Long, Pair<String, Character>> job) {
             return job
-                    .mapper(new KeyValueMapper())
+                    .mapper(new DepartmentAndProvinceByInhabitantMapper())
                     .reducer(new CountReducerFactory())
                     .submit(new MinAmountAndOrderCollator(false, false, n));
         }
