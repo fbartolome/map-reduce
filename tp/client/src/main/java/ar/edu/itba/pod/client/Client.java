@@ -26,8 +26,6 @@ import java.util.concurrent.atomic.AtomicLong;
 public class Client {
     private static Logger logger = LoggerFactory.getLogger(Client.class);
 
-    public static String mapName = "people";
-
     public static void main(String[] args) {
 
         logger.info("hazelcast Client Starting ...");
@@ -38,8 +36,6 @@ public class Client {
         final ClientConfig ccfg = new ClientConfig();
         ccfg.getNetworkConfig().setAddresses(Arrays.asList(arguments.getIps()));
         final HazelcastInstance client = HazelcastClient.newHazelcastClient(ccfg);
-
-        final AtomicLong count = new AtomicLong(0);
 
         JobTracker jobTracker = client.getJobTracker("tracker");
 
@@ -56,7 +52,7 @@ public class Client {
 
                 case 1:
                     logger.info("Creating local map with data");
-                    final IMap<Long,Character> map1 = client.getMap(mapName);
+                    final IMap<Long,Character> map1 = client.getMap("map1");
                     map1.clear();
                     timer.start();
                     Map<Long,Character> query1Map = CSVReader.getRegions(arguments.getInputPath());
@@ -78,7 +74,7 @@ public class Client {
                     logger.info("Creating local map with data");
                     timer.start();
                     Map<Long, String> query2Map = CSVReader.departmentInProv(arguments.getInputPath(), arguments.getProvince());
-                    IMap<Long,String> map2 = client.getMap("departments");
+                    IMap<Long,String> map2 = client.getMap("map2");
                     map2.clear();
                     logger.info("Start loading remote data");
                     map2.putAll(query2Map);
@@ -98,7 +94,8 @@ public class Client {
                 case 3:
                     logger.info("Creating local map with data");
                     Map<Long, Pair<Character, ActivityCondition>> auxMap = CSVReader.getConditionByRegion(arguments.getInputPath());
-                    IMap<Long, Pair<Character, ActivityCondition>> map3 = client.getMap("activityConditions");
+                    IMap<Long, Pair<Character, ActivityCondition>> map3 = client.getMap("map3");
+                    map3.clear();
                     logger.info("Start loading remote data");
                     map3.putAll(auxMap);
                     logger.info("Finished loading remote data");
@@ -110,9 +107,8 @@ public class Client {
 
                 case 4:
                     logger.info("Creating local map with data");
-                    final IMap<Integer,Character> map4 = client.getMap(mapName);
+                    final IMap<Integer,Character> map4 = client.getMap("map4");
                     map4.clear();
-
                     Map<Integer,Character> otherMap4 = CSVReader.getHomesByHomeKey(arguments.getInputPath());
                     logger.info("Start loading remote data");
                     map4.putAll(otherMap4);
@@ -125,7 +121,7 @@ public class Client {
 
                 case 5:
                     logger.info("Creating local map with data");
-                    final IMap<Long,Pair<Character,Integer>> map5 = client.getMap(mapName);
+                    final IMap<Long,Pair<Character,Integer>> map5 = client.getMap("map5");
                     map5.clear();
                     Map<Long,Pair<Character,Integer>> otherMap5 = CSVReader.getHomesByRegionRawData(arguments.getInputPath());
                     logger.info("Start loading remote data");
@@ -140,7 +136,8 @@ public class Client {
                 case 6:
                     logger.info("Creating local map with data");
                     Map<Long, Pair<String, Character>> auxMap6 = CSVReader.getDepartmentsAndProvinces(arguments.getInputPath());
-                    IMap<Long, Pair<String, Character>> map6 = client.getMap("dept");
+                    IMap<Long, Pair<String, Character>> map6 = client.getMap("map6");
+                    map6.clear();
                     logger.info("Start loading remote data");
                     map6.putAll(auxMap6);
                     logger.info("Finished loading remote data");
@@ -152,7 +149,7 @@ public class Client {
 
                 case 7:
                     logger.info("Creating local map with data");
-                    final IMap<Long,Pair<String,Character>> map7 = client.getMap(mapName);
+                    final IMap<Long,Pair<String,Character>> map7 = client.getMap("map7");
                     map7.clear();
                     timer.start();
                     final Map<Long,Pair<String,Character>> query7Map = CSVReader.getDepartmentsAndProvinces(arguments.getInputPath());
@@ -171,7 +168,6 @@ public class Client {
                     break;
             }
             timerFile.close();
-//            query.output(writer, query.getFuture(job7).get());
 
         }catch (IOException e) {
             System.err.println("There was an error writing the output " + e.getMessage());
