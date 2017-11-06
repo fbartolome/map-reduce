@@ -32,17 +32,17 @@ public class Server {
                             .addInterface("10.17.*.*"))
                         )
                 .setGroupConfig(new GroupConfig()
-                        .setName("GRU1")
-                        .setPassword("GRU1PASS"))
+                        .setName("56382-54308-55291-53559")
+                        .setPassword("56382-54308-55291-53559"))
 
-                .setInstanceName("TPE-Cluster-G1")
-                .addMapConfig(new MapConfig().setName("map1"))
-                .addMapConfig(new MapConfig().setName("map2"))
-                .addMapConfig(new MapConfig().setName("map3"))
-                .addMapConfig(new MapConfig().setName("map4"))
-                .addMapConfig(new MapConfig().setName("map5"))
-                .addMapConfig(new MapConfig().setName("map6"))
-                .addMapConfig(new MapConfig().setName("map7"));
+                .setInstanceName("56382-54308-55291-53559")
+                .addMapConfig(new MapConfig().setName("56382-54308-55291-53559-map1"))
+                .addMapConfig(new MapConfig().setName("56382-54308-55291-53559-map2"))
+                .addMapConfig(new MapConfig().setName("56382-54308-55291-53559-map3"))
+                .addMapConfig(new MapConfig().setName("56382-54308-55291-53559-map4"))
+                .addMapConfig(new MapConfig().setName("56382-54308-55291-53559-map5"))
+                .addMapConfig(new MapConfig().setName("56382-54308-55291-53559-map6"))
+                .addMapConfig(new MapConfig().setName("56382-54308-55291-53559-map7"));
 
         // Set minimum cluster size
         //config.setProperty("hazelcast.initial.min.cluster.size","2");

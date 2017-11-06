@@ -35,8 +35,8 @@ public class Client {
 
         final ClientConfig ccfg = new ClientConfig()
                 .setGroupConfig(new GroupConfig()
-                        .setName("GRU1")
-                        .setPassword("GRU1PASS"));
+                        .setName("56382-54308-55291-53559")
+                        .setPassword("56382-54308-55291-53559"));
         ccfg.getNetworkConfig()
                 .setAddresses(Arrays.asList(arguments.getIps()));
         final HazelcastInstance client = HazelcastClient.newHazelcastClient(ccfg);
@@ -55,7 +55,7 @@ public class Client {
 
                 case 1:
                     logger.info("Creating local map with data");
-                    final IMap<Long,Character> map1 = client.getMap("map1");
+                    final IMap<Long,Character> map1 = client.getMap("56382-54308-55291-53559-map1");
                     map1.clear();
                     timer.start();
                     Map<Long,Character> query1Map = CSVReader.getRegions(arguments.getInputPath());
@@ -77,7 +77,7 @@ public class Client {
                     logger.info("Creating local map with data");
                     timer.start();
                     Map<Long, String> query2Map = CSVReader.departmentInProv(arguments.getInputPath(), arguments.getProvince());
-                    IMap<Long,String> map2 = client.getMap("map2");
+                    IMap<Long,String> map2 = client.getMap("56382-54308-55291-53559-map2");
                     map2.clear();
                     logger.info("Start loading remote data");
                     map2.putAll(query2Map);
@@ -97,7 +97,7 @@ public class Client {
                 case 3:
                     logger.info("Creating local map with data");
                     Map<Long, Pair<Character, ActivityCondition>> auxMap = CSVReader.getConditionByRegion(arguments.getInputPath());
-                    IMap<Long, Pair<Character, ActivityCondition>> map3 = client.getMap("map3");
+                    IMap<Long, Pair<Character, ActivityCondition>> map3 = client.getMap("56382-54308-55291-53559-map3");
                     map3.clear();
                     logger.info("Start loading remote data");
                     map3.putAll(auxMap);
@@ -110,7 +110,7 @@ public class Client {
 
                 case 4:
                     logger.info("Creating local map with data");
-                    final IMap<Integer,Character> map4 = client.getMap("map4");
+                    final IMap<Integer,Character> map4 = client.getMap("56382-54308-55291-53559-map4");
                     map4.clear();
                     Map<Integer,Character> otherMap4 = CSVReader.getHomesByHomeKey(arguments.getInputPath());
                     logger.info("Start loading remote data");
@@ -124,7 +124,7 @@ public class Client {
 
                 case 5:
                     logger.info("Creating local map with data");
-                    final IMap<Long,Pair<Character,Integer>> map5 = client.getMap("map5");
+                    final IMap<Long,Pair<Character,Integer>> map5 = client.getMap("56382-54308-55291-53559-map5");
                     map5.clear();
                     Map<Long,Pair<Character,Integer>> otherMap5 = CSVReader.getHomesByRegionRawData(arguments.getInputPath());
                     logger.info("Start loading remote data");
@@ -139,7 +139,7 @@ public class Client {
                 case 6:
                     logger.info("Creating local map with data");
                     Map<Long, Pair<String, Character>> auxMap6 = CSVReader.getDepartmentsAndProvinces(arguments.getInputPath());
-                    IMap<Long, Pair<String, Character>> map6 = client.getMap("map6");
+                    IMap<Long, Pair<String, Character>> map6 = client.getMap("56382-54308-55291-53559-map6");
                     map6.clear();
                     logger.info("Start loading remote data");
                     map6.putAll(auxMap6);
@@ -152,7 +152,7 @@ public class Client {
 
                 case 7:
                     logger.info("Creating local map with data");
-                    final IMap<Long,Pair<String,Character>> map7 = client.getMap("map7");
+                    final IMap<Long,Pair<String,Character>> map7 = client.getMap("56382-54308-55291-53559-map7");
                     map7.clear();
                     timer.start();
                     final Map<Long,Pair<String,Character>> query7Map = CSVReader.getDepartmentsAndProvinces(arguments.getInputPath());
