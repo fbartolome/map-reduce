@@ -1,5 +1,7 @@
 package ar.edu.itba.pod.server;
 
+import ar.edu.itba.pod.utils.CLIParser;
+import ar.edu.itba.pod.utils.ConsoleArguments;
 import com.hazelcast.config.*;
 import com.hazelcast.core.Hazelcast;
 import org.slf4j.Logger;
@@ -12,11 +14,14 @@ public class Server {
 
     public static void main(String[] args) {
 
-        //TODO desharcodear
+
+        CLIParser cli = new CLIParser(args);
+        ConsoleArguments arguments = cli.parse();
+
         ArrayList<String> ad = new ArrayList<>();
-        ad.add("127.0.0.1");
-
-
+        for(String ip: arguments.getIps()){
+           ad.add(ip);
+        }
         logger.info("Hazelcast Server Starting ...");
         Config config = new Config()
                 .setNetworkConfig(new NetworkConfig()
@@ -26,10 +31,6 @@ public class Server {
                         .setTcpIpConfig(new TcpIpConfig()
                             .setEnabled(true)
                             .setMembers(ad)))
-                        .setInterfaces(new InterfacesConfig()
-                            .setEnabled(true)
-                            //TODO desharcodear
-                            .addInterface("10.17.*.*"))
                         )
                 .setGroupConfig(new GroupConfig()
                         .setName("56382-54308-55291-53559")
