@@ -15,7 +15,7 @@ public class Person implements Serializable{
         this.activityCondition = activityCondition;
         this.homeId = homeId;
         this.departmentName = departmentName;
-        this.provinceName = provinceName.toLowerCase();
+        this.provinceName = provinceName;
         this.region = Regions.getRegion(this.provinceName);
     }
 
@@ -47,7 +47,7 @@ public class Person implements Serializable{
         Person person = (Person) o;
 
         if (homeId != person.homeId) return false;
-        if (activityCondition != person.activityCondition) return false;
+        if (!activityCondition.equals(person.activityCondition)) return false;
         if (!departmentName.equals(person.departmentName)) return false;
         return provinceName.equals(person.provinceName);
     }
