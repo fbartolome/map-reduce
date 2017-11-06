@@ -47,12 +47,9 @@ public class Client {
         JobTracker jobTracker = client.getJobTracker("tracker");
 
         Stopwatch timer = Stopwatch.createUnstarted();
-        try {
-            FileWriter fw = new FileWriter(arguments.getTimeOutPath(), true);
-            BufferedWriter bw = new BufferedWriter(fw);
-            PrintWriter timerFile = new PrintWriter(bw);
+        try (PrintWriter timerFile = new PrintWriter(arguments.getTimeOutPath(), "UTF-8");
+             PrintWriter writer = new PrintWriter(arguments.getOutPath(), "UTF-8") ){
 
-            PrintWriter writer = new PrintWriter(arguments.getOutPath(), "UTF-8");
             Query query = null;
             switch (arguments.getQueryNumber()) {
 
@@ -233,6 +230,8 @@ public class Client {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
+        } finally {
+            client.shutdown();
         }
 
 
