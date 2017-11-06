@@ -20,14 +20,14 @@ public class InhabitantsPerHouseholdByRegionReducerFactory implements ReducerFac
         private Long population = new Long(0);
 
         @Override
-        public void reduce(Integer houseId) {
+        public synchronized void reduce(Integer houseId) {
             set.add(houseId);
             population++;
         }
 
         @Override
         public Double finalizeReduce() {
-            return BigDecimal.valueOf(population / set.size())
+            return BigDecimal.valueOf(Double.valueOf(population) / set.size())
                 .setScale(2, RoundingMode.HALF_UP).doubleValue();
         }
     }
