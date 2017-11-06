@@ -14,7 +14,7 @@ public class CSVReaderTest {
     @Test
     public void CSVReaderHappyTest() {
         final String path = "./src/main/resources/census100.csv";
-        Person p = new Person(ActivityCondition.values()[1],12170685,"Río Grande","Tierra del Fuego");
+        Person p = new Person(new ActivityCondition(1),12170685,"Río Grande","Tierra del Fuego");
         Map<Long,Person> people = CSVReader.getPeople(path);
         Assert.assertEquals(100, people.size());
         Assert.assertTrue(people.containsValue(p));

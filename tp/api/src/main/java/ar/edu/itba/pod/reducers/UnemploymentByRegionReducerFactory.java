@@ -22,9 +22,9 @@ public class UnemploymentByRegionReducerFactory implements
 
     @Override
     public void reduce(ActivityCondition activityCondition) {
-      if(activityCondition == ActivityCondition.EMPLOYED){
+      if(activityCondition.equals(ActivityCondition.EMPLOYED)){
         employed++;
-      } else if(activityCondition == ActivityCondition.UNEMPLOYED){
+      } else if(activityCondition.equals(ActivityCondition.UNEMPLOYED)){
         unemployed++;
       }
     }

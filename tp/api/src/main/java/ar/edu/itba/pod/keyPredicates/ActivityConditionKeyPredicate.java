@@ -26,7 +26,7 @@ public class ActivityConditionKeyPredicate implements KeyPredicate<Long>, Hazelc
     public boolean evaluate(Long id) {
         final Map<Long,Person> map = hazelcastInstance.getMap(mapName);
         final Person person = map.get(id);
-        return person.getActivityCondition() == ActivityCondition.EMPLOYED ||
-                person.getActivityCondition() == ActivityCondition.UNEMPLOYED;
+        return person.getActivityCondition().equals(ActivityCondition.EMPLOYED) ||
+                person.getActivityCondition().equals(ActivityCondition.UNEMPLOYED);
     }
 }

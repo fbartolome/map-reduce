@@ -35,7 +35,7 @@ public class CSVReader {
                     lineCounter.increment();
                     people.put(lineCounter.longValue(),
                             new Person(
-                                    ActivityCondition.values()[Integer.valueOf(lineParts[index++])],
+                                    new ActivityCondition(Integer.valueOf(lineParts[index++])),
                                     Integer.valueOf(lineParts[index++]),
                                     lineParts[index++],
                                     lineParts[index])
@@ -84,7 +84,7 @@ public class CSVReader {
                     query.put(lineCounter.longValue(),
                             new Pair(
                                     RegionMapper.getKey(Regions.getRegion(lineParts[3])),
-                                    ActivityCondition.values()[Integer.valueOf(lineParts[0])]
+                                    new ActivityCondition(Integer.valueOf(lineParts[0]))
                             )
                     );
                 });
