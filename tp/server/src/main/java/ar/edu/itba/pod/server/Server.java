@@ -1,6 +1,6 @@
 package ar.edu.itba.pod.server;
 
-import ar.edu.itba.pod.utils.CLIParser;
+import ar.edu.itba.pod.utils.SERParser;
 import ar.edu.itba.pod.utils.ConsoleArguments;
 import com.hazelcast.config.*;
 import com.hazelcast.core.Hazelcast;
@@ -15,7 +15,7 @@ public class Server {
     public static void main(String[] args) {
 
 
-        CLIParser cli = new CLIParser(args);
+        SERParser cli = new SERParser(args);
         ConsoleArguments arguments = cli.parse();
 
         ArrayList<String> ad = new ArrayList<>();

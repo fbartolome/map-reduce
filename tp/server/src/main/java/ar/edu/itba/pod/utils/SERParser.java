@@ -4,7 +4,7 @@ import org.apache.commons.cli.*;
 
 import static java.lang.System.exit;
 
-public class CLIParser {
+public class SERParser {
 
     private String[] args;
     private Options options = new Options();
@@ -15,7 +15,7 @@ public class CLIParser {
     private static final String addressesArg = "Daddresses";
 
 
-    public CLIParser(String[] args) {
+    public SERParser(String[] args) {
         this.args = args;
 
         options.addOption(helpShortArg, helpArg, false, "show help");
