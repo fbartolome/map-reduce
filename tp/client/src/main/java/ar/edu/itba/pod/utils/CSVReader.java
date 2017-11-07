@@ -2,7 +2,6 @@ package ar.edu.itba.pod.utils;
 
 import ar.edu.itba.pod.model.ActivityCondition;
 import ar.edu.itba.pod.model.Pair;
-import ar.edu.itba.pod.model.Person;
 import ar.edu.itba.pod.model.ProvinceMapper;
 import ar.edu.itba.pod.model.RegionMapper;
 import org.slf4j.Logger;
@@ -20,34 +19,6 @@ import java.util.concurrent.atomic.LongAdder;
 public class CSVReader {
 
     private static Logger logger = LoggerFactory.getLogger(CSVReader.class);
-
-    //not tested yet
-    public static Map<Long, Person> getPeople(String path){
-        //read file into stream, try-with-resources
-        logger.info("Start reading from CSV ...");
-        Map<Long,Person> people = new HashMap<>();
-        try {
-            try(BufferedReader reader = new BufferedReader(new FileReader(path))) {
-                LongAdder lineCounter = new LongAdder();
-                reader.lines().forEach(line -> {
-                    String[] lineParts = line.split(",");
-                    int index = 0;
-                    lineCounter.increment();
-                    people.put(lineCounter.longValue(),
-                            new Person(
-                                    new ActivityCondition(Integer.valueOf(lineParts[index++])),
-                                    Integer.valueOf(lineParts[index++]),
-                                    lineParts[index++],
-                                    lineParts[index])
-                    );
-                });
-            }
-            logger.info("Finished reading from CSV ...");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return people;
-    }
 
     public static Map<Long,Character> getRegions(String path){
         //read file into stream, try-with-resources

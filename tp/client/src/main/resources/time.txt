@@ -1,0 +1,6 @@
+2017-11-06T22:00:39.171 INFO [main] Client.java:180 - Inicio de la lectura del archivo
+2017-11-06T22:00:40.890 INFO [main] Client.java:186 - Fin de la lectura del archivo
+Tiempo de lectura: 1.735 s
+2017-11-06T22:00:40.892 INFO [main] Client.java:190 - Inicio del trabajo map/reduce
+2017-11-06T22:00:41.528 INFO [main] Client.java:195 - Fin del trabajo map/reduce
+Query6 tardó: 636.8 ms

@@ -1,6 +1,5 @@
 package ar.edu.itba.pod.keyPredicates;
 
-import ar.edu.itba.pod.model.Person;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.HazelcastInstanceAware;
 import com.hazelcast.mapreduce.KeyPredicate;

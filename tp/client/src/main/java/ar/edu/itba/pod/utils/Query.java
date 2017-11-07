@@ -1,6 +1,5 @@
 package ar.edu.itba.pod.utils;
 
-import ar.edu.itba.pod.model.Person;
 import com.hazelcast.core.ICompletableFuture;
 import com.hazelcast.mapreduce.Job;
 
