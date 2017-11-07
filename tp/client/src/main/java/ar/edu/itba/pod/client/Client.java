@@ -174,8 +174,8 @@ public class Client {
                     logger.info("Creating local map with data");
                     timer.start();
                     printTime(timerFile, "Inicio de la lectura del archivo");
-                    Map<Long, Pair<String, Character>> auxMap6 = CSVReader.getDepartmentsAndProvinces(arguments.getInputPath());
-                    IMap<Long, Pair<String, Character>> map6 = client.getMap("56382-54308-55291-53559-map6");
+                    Map<Long, String> auxMap6 = CSVReader.getDepartmentsInProvinces(arguments.getInputPath());
+                    IMap<Long, String> map6 = client.getMap("56382-54308-55291-53559-map6");
                     map6.clear();
                     logger.info("Start loading remote data");
                     map6.putAll(auxMap6);
@@ -185,7 +185,7 @@ public class Client {
                     timer.start();
                     printTime(timerFile, "Inicio del trabajo map/reduce");
                     logger.info("Finished loading remote data");
-                    Job<Long, Pair<String, Character>> job6 = jobTracker.newJob(KeyValueSource.fromMap(map6));
+                    Job<Long, String> job6 = jobTracker.newJob(KeyValueSource.fromMap(map6));
                     query = new QueryManager.SixthQuery(arguments.getAmount());
                     query.output(writer, query.getFuture(job6).get());
                     printTime(timerFile, "Fin del trabajo map/reduce");

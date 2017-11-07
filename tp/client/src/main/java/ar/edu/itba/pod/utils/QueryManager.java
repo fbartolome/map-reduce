@@ -5,7 +5,6 @@ import ar.edu.itba.pod.collators.OrderByCollator;
 import ar.edu.itba.pod.collators.TopAndOrderByCollator;
 import ar.edu.itba.pod.combiners.AddCombinerFactory;
 import ar.edu.itba.pod.combiners.UnemploymentByRegionCombinerFactory;
-import ar.edu.itba.pod.mappers.DepartmentAndProvinceByInhabitantMapper;
 import ar.edu.itba.pod.mappers.KeyValueMapper;
 import ar.edu.itba.pod.mappers.MostSharingDeptsProvsMapper;
 import ar.edu.itba.pod.mappers.UnitMapper;
@@ -181,7 +180,7 @@ public class QueryManager {
      * Key out: department
      * Value in: amount of provinces
      */
-    static public class SixthQuery implements Query<Long,Pair<String, Character>,List<Entry<String,Integer>>> {
+    static public class SixthQuery implements Query<Long,String,List<Entry<String,Integer>>> {
         private int n;
 
         public SixthQuery(int n) {
@@ -189,9 +188,9 @@ public class QueryManager {
         }
 
         @Override
-        public ICompletableFuture<List<Entry<String, Integer>>> getFuture(Job<Long, Pair<String, Character>> job) {
+        public ICompletableFuture<List<Entry<String, Integer>>> getFuture(Job<Long, String> job) {
             return job
-                    .mapper(new DepartmentAndProvinceByInhabitantMapper())
+                    .mapper(new UnitMapper())
                     .combiner(new AddCombinerFactory<>(0))
                     .reducer(new CountReducerFactory())
                     .submit(new MinAmountAndOrderCollator(false, false, n));

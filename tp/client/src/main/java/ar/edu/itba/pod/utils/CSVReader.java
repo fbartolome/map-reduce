@@ -1,12 +1,9 @@
 package ar.edu.itba.pod.utils;
 
-import ar.edu.itba.pod.model.ActivityCondition;
-import ar.edu.itba.pod.model.Pair;
-import ar.edu.itba.pod.model.ProvinceMapper;
-import ar.edu.itba.pod.model.RegionMapper;
+import ar.edu.itba.pod.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ar.edu.itba.pod.model.Regions;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -178,6 +175,42 @@ public class CSVReader {
         logger.info("Finished reading from CSV ...");
         return query;
     }
+
+
+    //First value of Pair is the department and the second one is the province.
+    public static Map<Long, String> getDepartmentsInProvinces(String path){
+        //read file into stream, try-with-resources
+        logger.info("Start reading from CSV ...");
+        Set<Pair<String, Character>> set = new HashSet<>();
+        try {
+            try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
+                reader.lines().forEach(line -> {
+                    String[] lineParts = line.split(",");
+                    set.add(
+                            new Pair(
+                                    lineParts[2],
+                                    ProvinceMapper.getKey(lineParts[3])
+                            )
+                    );
+                });
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Map<Long, String> query = new HashMap<>();
+        LongAdder lineCounter = new LongAdder();
+        set.stream().forEach(p -> {
+                    query.put(lineCounter.longValue(), p.getKey());
+                    lineCounter.increment();
+                }
+        );
+
+        logger.info("Finished reading from CSV ...");
+        return query;
+    }
+
+
     public static Map<Long, String> departmentInProv(String path, String prov){
         //read file into stream, try-with-resources
         logger.info("Start reading from CSV ...");
