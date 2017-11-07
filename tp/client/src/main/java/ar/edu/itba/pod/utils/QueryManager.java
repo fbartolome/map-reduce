@@ -18,8 +18,6 @@ import ar.edu.itba.pod.reducers.MostSharingDeptsProvsReducerFactory;
 import ar.edu.itba.pod.reducers.Query3ReducerFactory;
 import com.hazelcast.core.ICompletableFuture;
 import com.hazelcast.mapreduce.Job;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.PrintWriter;
 import java.util.List;
@@ -28,7 +26,6 @@ import java.util.function.Function;
 
 public class QueryManager {
 
-    private static Logger logger = LoggerFactory.getLogger(QueryManager.class);
 
     private static <T,U> String defaultFormatter(Entry<T,U> e) {
         return e.getKey() + "," + e.getValue() + "\n";
@@ -53,6 +50,9 @@ public class QueryManager {
     }
 
     /**
+     *
+     * Total population per region, ordered decreasingly by the total population
+     *
      * Key in: id
      * Value in: region
      * Key out: region
@@ -76,6 +76,9 @@ public class QueryManager {
     }
 
     /**
+     *
+     *the n most populated departments in a particular province (the province has already been filtered previously)
+     *
      * Key in: id
      * Value in: department
      * Key out: department
@@ -84,11 +87,9 @@ public class QueryManager {
     static public class SecondQuery implements Query<Long,String,List<Entry<String,Long>>> {
 
         private int n;
-        private String prov;
 
-        public SecondQuery(int n, String prov) {
+        public SecondQuery(int n) {
             this.n = n;
-            this.prov = prov;
         }
 
         @Override
@@ -107,6 +108,9 @@ public class QueryManager {
     }
 
     /**
+     *
+     * Unemployement index in each region of the country, ordered decreasingly by index
+     *
      * Key in: id
      * Value in: pair of region and activity condition
      * Key out: region
@@ -130,6 +134,9 @@ public class QueryManager {
     }
 
     /**
+     *
+     * Total amount of homes in each region ordered decreasingly by the total amount of homes
+     *
      * Key in: household id
      * Value in: region
      * Key out: region
@@ -153,6 +160,9 @@ public class QueryManager {
     }
 
     /**
+     *
+     * Average amount of people per house in each region, ordered decreasingly by avg
+     *
      * Key in: id
      * Value in: pair of region and household id
      * Key out: region
@@ -175,8 +185,10 @@ public class QueryManager {
     }
 
     /**
+     * departments that appear in at least n distinct provinces, ordered decreasingly by number of apparitions
+     *
      * Key in: id
-     * Value in: pair of department and province
+     * Value in: department
      * Key out: department
      * Value in: amount of provinces
      */
@@ -204,6 +216,9 @@ public class QueryManager {
 
 
     /**
+     *
+     * Pair of provinces that share at least n department names
+     *
      * Key in: id
      * Value in: pair of department and province
      * Key out: Pair of province 1 and province 2

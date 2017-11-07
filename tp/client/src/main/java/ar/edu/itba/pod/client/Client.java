@@ -90,7 +90,7 @@ public class Client {
                     logger.debug("map size " + map2.size());
                     logger.info("Finished loading remote data");
                     Job<Long, String> job2 = jobTracker.newJob(KeyValueSource.fromMap(map2));
-                    query = new QueryManager.SecondQuery(arguments.getAmount(), arguments.getProvince());
+                    query = new QueryManager.SecondQuery(arguments.getAmount());
                     query.output(writer, query.getFuture(job2).get());
                     printTime(timerFile, "Fin del trabajo map/reduce");
                     timerFile.append("Query" + arguments.getQueryNumber() + " tardó: " + timer).println();
