@@ -16,11 +16,15 @@ public class UnemploymentByRegionCombinerFactory<K> implements CombinerFactory<K
         private Pair<Integer,Integer> pair = new Pair(0,0);
 
         @Override
-        synchronized public void combine(ActivityCondition ac) {
+        public void combine(ActivityCondition ac) {
             if(ac.equals(ActivityCondition.UNEMPLOYED)){
-                pair.setKey(pair.getKey() + 1);
+                synchronized (this){
+                    pair.setKey(pair.getKey() + 1);
+                }
             } else if (ac.equals(ActivityCondition.EMPLOYED)) {
-                pair.setValue(pair.getValue() + 1);
+                synchronized (this){
+                    pair.setValue(pair.getValue() + 1);
+                }
             }
         }
 
