@@ -28,7 +28,7 @@ public class InhabitantsPerHouseholdByRegionReducerFactory implements ReducerFac
         @Override
         public Double finalizeReduce() {
             return BigDecimal.valueOf(Double.valueOf(population) / set.size())
-                .setScale(2, RoundingMode.FLOOR).doubleValue();
+                .setScale(2, RoundingMode.HALF_EVEN).doubleValue();
         }
     }
 }

@@ -13,7 +13,7 @@ public class ProvinceMapper {
 
     static {
         LongAdder adder = new LongAdder();
-        Regions.getProvinces().forEach((p) -> {
+        Regions.getProvinces().stream().sorted().forEach((p) -> {
                provinceKey.put(p, (char)adder.longValue());
                reverseProvinceKey.put((char)adder.longValue(), p);
                adder.increment();
