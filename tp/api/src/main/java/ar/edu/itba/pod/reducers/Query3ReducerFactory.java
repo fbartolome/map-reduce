@@ -30,7 +30,7 @@ public class Query3ReducerFactory implements
         @Override
         public Double finalizeReduce() {
             return BigDecimal.valueOf(unemployed.doubleValue() / (employed.doubleValue() + unemployed.doubleValue()))
-                    .setScale(2, RoundingMode.HALF_DOWN).doubleValue();
+                    .setScale(2, RoundingMode.FLOOR).doubleValue();
         }
     }
 }

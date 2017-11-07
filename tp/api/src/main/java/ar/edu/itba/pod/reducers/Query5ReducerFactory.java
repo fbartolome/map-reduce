@@ -31,7 +31,7 @@ public class Query5ReducerFactory implements ReducerFactory<Character,Pair<Set<I
         @Override
         public Double finalizeReduce() {
             return BigDecimal.valueOf(population.doubleValue() / set.size())
-                    .setScale(2, RoundingMode.HALF_UP).doubleValue();
+                    .setScale(2, RoundingMode.FLOOR).doubleValue();
         }
     }
 }
