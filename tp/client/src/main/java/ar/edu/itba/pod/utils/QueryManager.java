@@ -15,7 +15,7 @@ import ar.edu.itba.pod.model.RegionMapper;
 import ar.edu.itba.pod.reducers.CountReducerFactory;
 import ar.edu.itba.pod.reducers.InhabitantsPerHouseholdByRegionReducerFactory;
 import ar.edu.itba.pod.reducers.MostSharingDeptsProvsReducerFactory;
-import ar.edu.itba.pod.reducers.Query3ReducerFactory;
+import ar.edu.itba.pod.reducers.UnemploymentByRegionReducerFactory;
 import com.hazelcast.core.ICompletableFuture;
 import com.hazelcast.mapreduce.Job;
 
@@ -123,7 +123,7 @@ public class QueryManager {
             return job
                     .mapper(new KeyValueMapper())
                     .combiner(new UnemploymentByRegionCombinerFactory())
-                    .reducer(new Query3ReducerFactory())
+                    .reducer(new UnemploymentByRegionReducerFactory())
                     .submit(new OrderByCollator(false, false));
         }
 

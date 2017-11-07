@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class Query3ReducerFactory implements
+public class UnemploymentByRegionReducerFactory implements
         ReducerFactory<Character,Pair<Integer,Integer>,Double> {
 
     @Override
