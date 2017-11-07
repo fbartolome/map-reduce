@@ -1,6 +1,6 @@
-2017-11-07T00:35:24.572 INFO [main] Client.java:176 - Inicio de la lectura del archivo
-2017-11-07T00:35:25.954 INFO [main] Client.java:182 - Fin de la lectura del archivo
-Tiempo de lectura: 1.429 s
-2017-11-07T00:35:25.959 INFO [main] Client.java:186 - Inicio del trabajo map/reduce
-2017-11-07T00:35:26.146 INFO [main] Client.java:191 - Fin del trabajo map/reduce
-Query6 tardó: 187.7 ms
+2017-11-07T00:48:16.351 INFO [main] Client.java:202 - Inicio de la lectura del archivo
+2017-11-07T00:48:18.182 INFO [main] Client.java:206 - Fin de la lectura del archivo
+Tiempo de lectura: 1.860 s
+2017-11-07T00:48:18.184 INFO [main] Client.java:210 - Inicio del trabajo map/reduce
+2017-11-07T00:48:18.542 INFO [main] Client.java:215 - Fin del trabajo map/reduce
+Query7 tardó: 358.4 ms

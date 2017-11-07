@@ -111,6 +111,7 @@ public class CSVReader {
     }
 
 
+    /*Used for testing*/
     public static Map<Long, Pair<Character, Integer>> getHomesByRegionLocalFilter(String path){
         //read file into stream, try-with-resources
         logger.info("Start reading from CSV ...");
@@ -147,23 +148,7 @@ public class CSVReader {
     public static Map<Long, Pair<String, Character>> getDepartmentsAndProvinces(String path){
         //read file into stream, try-with-resources
         logger.info("Start reading from CSV ...");
-        Set<Pair<String, Character>> set = new HashSet<>();
-        try {
-            try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
-                reader.lines().forEach(line -> {
-                    String[] lineParts = line.split(",");
-                    set.add(
-                            new Pair(
-                                    lineParts[2],
-                                    ProvinceMapper.getKey(lineParts[3])
-                            )
-                    );
-                });
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Set<Pair<String, Character>> set = getDepartmentsAndProvincesSet(path);
         Map<Long, Pair<String, Character>> query = new HashMap<>();
         LongAdder lineCounter = new LongAdder();
         set.stream().forEach(p -> {
@@ -176,28 +161,15 @@ public class CSVReader {
         return query;
     }
 
-
-    //First value of Pair is the department and the second one is the province.
+    /**
+     *
+     * @param path
+     * @return Map with ids and departments in distinct provinces
+     */
     public static Map<Long, String> getDepartmentsInProvinces(String path){
         //read file into stream, try-with-resources
         logger.info("Start reading from CSV ...");
-        Set<Pair<String, Character>> set = new HashSet<>();
-        try {
-            try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
-                reader.lines().forEach(line -> {
-                    String[] lineParts = line.split(",");
-                    set.add(
-                            new Pair(
-                                    lineParts[2],
-                                    ProvinceMapper.getKey(lineParts[3])
-                            )
-                    );
-                });
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Set<Pair<String, Character>> set = getDepartmentsAndProvincesSet(path);
         Map<Long, String> query = new HashMap<>();
         LongAdder lineCounter = new LongAdder();
         set.stream().forEach(p -> {
@@ -238,4 +210,26 @@ public class CSVReader {
         return query;
     }
 
+
+
+    private static Set<Pair<String, Character>> getDepartmentsAndProvincesSet(String path){
+        Set<Pair<String, Character>> set = new HashSet<>();
+        try {
+            try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
+                reader.lines().forEach(line -> {
+                    String[] lineParts = line.split(",");
+                    set.add(
+                            new Pair(
+                                    lineParts[2],
+                                    ProvinceMapper.getKey(lineParts[3])
+                            )
+                    );
+                });
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return set;
+    }
 }
