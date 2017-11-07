@@ -3,6 +3,7 @@ package ar.edu.itba.pod.utils;
 import ar.edu.itba.pod.collators.MinAmountAndOrderCollator;
 import ar.edu.itba.pod.collators.OrderByCollator;
 import ar.edu.itba.pod.collators.TopAndOrderByCollator;
+import ar.edu.itba.pod.combiners.AddCombinerFactory;
 import ar.edu.itba.pod.combiners.InhabitantsPerHouseholdByRegionCombinerFactory;
 import ar.edu.itba.pod.combiners.UnemploymentByRegionCombinerFactory;
 import ar.edu.itba.pod.mappers.DepartmentAndProvinceByInhabitantMapper;
@@ -62,6 +63,7 @@ public class QueryManager {
         public ICompletableFuture<List<Entry<Character, Long>>> getFuture(Job<Long, Character> job) {
             return job
                     .mapper(new UnitMapper())
+                    .combiner(new AddCombinerFactory(0))
                     .reducer(new CountReducerFactory())
                     .submit(new OrderByCollator(false, false));
         }
@@ -92,6 +94,7 @@ public class QueryManager {
         public ICompletableFuture<List<Entry<String, Long>>> getFuture(Job<Long, String> job) {
             return job
                     .mapper(new UnitMapper())
+                    .combiner(new AddCombinerFactory(0))
                     .reducer(new CountReducerFactory())
                     .submit(new TopAndOrderByCollator(n, false, false));
         }
@@ -117,10 +120,6 @@ public class QueryManager {
                     .combiner(new UnemploymentByRegionCombinerFactory())
                     .reducer(new Query3ReducerFactory())
                     .submit(new OrderByCollator(false, false));
-//            return job
-//                    .mapper(new KeyValueMapper())
-//                    .reducer(new UnemploymentByRegionReducerFactory())
-//                    .submit(new OrderByCollator(false, false));
         }
 
         @Override
@@ -141,6 +140,7 @@ public class QueryManager {
         public ICompletableFuture<List<Entry<Character, Long>>> getFuture(Job<Integer, Character> job) {
             return job
                     .mapper(new UnitMapper())
+                    .combiner(new AddCombinerFactory(0))
                     .reducer(new CountReducerFactory())
                     .submit(new OrderByCollator(false, false));
         }
@@ -163,13 +163,8 @@ public class QueryManager {
         public ICompletableFuture<List<Entry<Character, Double>>> getFuture(Job<Long,Pair<Character,Integer>> job) {
             return job
                     .mapper(new KeyValueMapper())
-                    .combiner(new InhabitantsPerHouseholdByRegionCombinerFactory())
-                    .reducer(new Query5ReducerFactory())
+                    .reducer(new InhabitantsPerHouseholdByRegionReducerFactory())
                     .submit(new OrderByCollator(false, false));
-//            return job
-//                    .mapper(new KeyValueMapper())
-//                    .reducer(new InhabitantsPerHouseholdByRegionReducerFactory())
-//                    .submit(new OrderByCollator(false, false));
         }
 
         @Override
@@ -195,6 +190,7 @@ public class QueryManager {
         public ICompletableFuture<List<Entry<String, Integer>>> getFuture(Job<Long, Pair<String, Character>> job) {
             return job
                     .mapper(new DepartmentAndProvinceByInhabitantMapper())
+                    .combiner(new AddCombinerFactory<>(0))
                     .reducer(new CountReducerFactory())
                     .submit(new MinAmountAndOrderCollator(false, false, n));
         }
