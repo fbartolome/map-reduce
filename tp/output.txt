@@ -1,5 +1,0 @@
-Región Buenos Aires,461524
-Región del Norte Grande Argentino,205818
-Región Centro,193286
-Región del Nuevo Cuyo,79163
-Región Patagónica,60209
