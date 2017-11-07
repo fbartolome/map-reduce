@@ -23,11 +23,12 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class Client {
+
     private static Logger logger = LoggerFactory.getLogger(Client.class);
 
     public static void main(String[] args) {
 
-        logger.info("hazelcast Client Starting ...");
+        logger.info("Hazelcast Client Starting ...");
 
         CLIParser cli = new CLIParser(args);
         ConsoleArguments arguments = cli.parse();
@@ -43,179 +44,45 @@ public class Client {
         JobTracker jobTracker = client.getJobTracker("tracker");
 
         Stopwatch timer = Stopwatch.createUnstarted();
+
         try (PrintWriter timerFile = new PrintWriter(arguments.getTimeOutPath(), "UTF-8");
              PrintWriter writer = new PrintWriter(arguments.getOutPath(), "UTF-8") ){
 
-            Query query = null;
             switch (arguments.getQueryNumber()) {
 
                 case 1:
-                    logger.info("Creating local map with data");
-                    final IMap<Long,Character> map1 = client.getMap("56382-54308-55291-53559-map1");
-                    map1.clear();
-                    timer.start();
-                    printTime(timerFile, "Inicio de la lectura del archivo");
-                    Map<Long,Character> query1Map = CSVReader.getRegions(arguments.getInputPath());
-                    printTime(timerFile, "Fin de la lectura del archivo");
-                    timerFile.append("Tiempo de lectura: " + timer).println();
-                    timer.stop().reset();
-                    timer.start();
-                    printTime(timerFile, "Inicio del trabajo map/reduce");
-                    logger.info("Start loading remote data");
-                    map1.putAll(query1Map);
-                    logger.info("Finished loading remote data");
-                    query = new QueryManager.FirstQuery();
-                    Job <Long,Character> job1 = jobTracker.newJob(KeyValueSource.fromMap(map1));
-                    query.output(writer, query.getFuture(job1).get());
-                    printTime(timerFile, "Fin del trabajo map/reduce");
-                    timerFile.append("Query" + arguments.getQueryNumber() + " tardó: " + timer).println();
-                    timer.stop();
-                    logger.info("Finished writing output");
+                    //Total population per region, ordered decreasingly by the total population
+                    firstQuery(client, timer, timerFile, arguments.getInputPath(), writer);
                     break;
 
                 case 2:
-                    logger.info("Creating local map with data");
-                    timer.start();
-                    printTime(timerFile, "Inicio de la lectura del archivo");
-                    Map<Long, String> query2Map = CSVReader.departmentInProv(arguments.getInputPath(), arguments.getProvince());
-                    IMap<Long,String> map2 = client.getMap("56382-54308-55291-53559-map2");
-                    map2.clear();
-                    logger.info("Start loading remote data");
-                    map2.putAll(query2Map);
-                    printTime(timerFile, "Fin de la lectura del archivo");
-                    timerFile.append("Tiempo de lectura: " + timer).println();
-                    timer.stop().reset();
-                    timer.start();
-                    printTime(timerFile, "Inicio del trabajo map/reduce");
-                    logger.debug("map size " + map2.size());
-                    logger.info("Finished loading remote data");
-                    Job<Long, String> job2 = jobTracker.newJob(KeyValueSource.fromMap(map2));
-                    query = new QueryManager.SecondQuery(arguments.getAmount());
-                    query.output(writer, query.getFuture(job2).get());
-                    printTime(timerFile, "Fin del trabajo map/reduce");
-                    timerFile.append("Query" + arguments.getQueryNumber() + " tardó: " + timer).println();
-                    timer.stop();
-                    logger.info("Finished writing output");
+                    //The n most populated departments in a particular province
+                    secondQuery(client, timer, timerFile, arguments.getInputPath(), writer, arguments.getProvince(), arguments.getAmount());
                     break;
 
                 case 3:
-                    logger.info("Creating local map with data");
-                    timer.start();
-                    printTime(timerFile, "Inicio de la lectura del archivo");
-                    Map<Long, Pair<Character, ActivityCondition>> auxMap = CSVReader.getConditionByRegion(arguments.getInputPath());
-                    IMap<Long, Pair<Character, ActivityCondition>> map3 = client.getMap("56382-54308-55291-53559-map3");
-                    map3.clear();
-                    logger.info("Start loading remote data");
-                    map3.putAll(auxMap);
-                    printTime(timerFile, "Fin de la lectura del archivo");
-                    timerFile.append("Tiempo de lectura: " + timer).println();
-                    timer.stop().reset();
-                    timer.start();
-                    printTime(timerFile, "Inicio del trabajo map/reduce");
-                    logger.info("Finished loading remote data");
-                    Job<Long, Pair<Character, ActivityCondition>> job3 = jobTracker.newJob(KeyValueSource.fromMap(map3));
-                    query = new QueryManager.ThirdQuery();
-                    query.output(writer, query.getFuture(job3).get());
-                    printTime(timerFile, "Fin del trabajo map/reduce");
-                    timerFile.append("Query" + arguments.getQueryNumber() + " tardó: " + timer).println();
-                    timer.stop();
-                    logger.info("Finished writing output");
+                    //Unemployement index in each region of the country, ordered decreasingly by index
+                    thirdQuery(client, timer, timerFile, arguments.getInputPath(), writer);
                     break;
 
                 case 4:
-                    logger.info("Creating local map with data");
-                    timer.start();
-                    printTime(timerFile, "Inicio de la lectura del archivo");
-                    final IMap<Integer,Character> map4 = client.getMap("56382-54308-55291-53559-map4");
-                    map4.clear();
-                    Map<Integer,Character> otherMap4 = CSVReader.getHomesByHomeKey(arguments.getInputPath());
-                    logger.info("Start loading remote data");
-                    map4.putAll(otherMap4);
-                    printTime(timerFile, "Fin de la lectura del archivo");
-                    timerFile.append("Tiempo de lectura: " + timer).println();
-                    timer.stop().reset();
-                    timer.start();
-                    printTime(timerFile, "Inicio del trabajo map/reduce");
-                    logger.info("Finished loading remote data");
-                    query = new QueryManager.FourthQuery();
-                    Job <Integer,Character> job4 = jobTracker.newJob(KeyValueSource.fromMap(map4));
-                    query.output(writer, query.getFuture(job4).get());
-                    printTime(timerFile, "Fin del trabajo map/reduce");
-                    timerFile.append("Query" + arguments.getQueryNumber() + " tardó: " + timer).println();
-                    timer.stop();
-                    logger.info("Finished writing output");
+                    //Total amount of homes in each region ordered decreasingly by the total amount of homes
+                    fourthQuery(client, timer, timerFile, arguments.getInputPath(), writer);
                     break;
 
                 case 5:
-                    logger.info("Creating local map with data");
-                    timer.start();
-                    printTime(timerFile, "Inicio de la lectura del archivo");
-                    final IMap<Long,Pair<Character,Integer>> map5 = client.getMap("56382-54308-55291-53559-map5");
-                    map5.clear();
-                    Map<Long,Pair<Character,Integer>> otherMap5 = CSVReader.getHomesByRegionRawData(arguments.getInputPath());
-                    logger.info("Start loading remote data");
-                    map5.putAll(otherMap5);
-                    printTime(timerFile, "Fin de la lectura del archivo");
-                    timerFile.append("Tiempo de lectura: " + timer).println();
-                    timer.stop().reset();
-                    timer.start();
-                    printTime(timerFile, "Inicio del trabajo map/reduce");
-                    logger.info("Finished loading remote data");
-                    query = new QueryManager.FifthQuery();
-                    Job <Long,Pair<Character,Integer>> job5 = jobTracker.newJob(KeyValueSource.fromMap(map5));
-                    query.output(writer, query.getFuture(job5).get());
-                    printTime(timerFile, "Fin del trabajo map/reduce");
-                    timerFile.append("Query" + arguments.getQueryNumber() + " tardó: " + timer).println();
-                    timer.stop();
-                    logger.info("Finished writing output");
+                    //Average amount of people per house in each region, ordered decreasingly by avg
+                    fifthQuery(client, timer, timerFile, arguments.getInputPath(), writer);
                     break;
 
                 case 6:
-                    logger.info("Creating local map with data");
-                    timer.start();
-                    printTime(timerFile, "Inicio de la lectura del archivo");
-                    Map<Long, String> auxMap6 = CSVReader.getDepartmentsInProvinces(arguments.getInputPath());
-                    IMap<Long, String> map6 = client.getMap("56382-54308-55291-53559-map6");
-                    map6.clear();
-                    logger.info("Start loading remote data");
-                    map6.putAll(auxMap6);
-                    printTime(timerFile, "Fin de la lectura del archivo");
-                    timerFile.append("Tiempo de lectura: " + timer).println();
-                    timer.stop().reset();
-                    timer.start();
-                    printTime(timerFile, "Inicio del trabajo map/reduce");
-                    logger.info("Finished loading remote data");
-                    Job<Long, String> job6 = jobTracker.newJob(KeyValueSource.fromMap(map6));
-                    query = new QueryManager.SixthQuery(arguments.getAmount());
-                    query.output(writer, query.getFuture(job6).get());
-                    printTime(timerFile, "Fin del trabajo map/reduce");
-                    timerFile.append("Query" + arguments.getQueryNumber() + " tardó: " + timer).println();
-                    timer.stop();
-                    logger.info("Finished writing output");
+                    //Departments that appear in at least n distinct provinces, ordered decreasingly by number of apparitions
+                    sixthQuery(client, timer, timerFile, arguments.getInputPath(), writer, arguments.getAmount());
                     break;
 
                 case 7:
-                    logger.info("Creating local map with data");
-                    final IMap<Long,Pair<String,Character>> map7 = client.getMap("56382-54308-55291-53559-map7");
-                    map7.clear();
-                    timer.start();
-                    printTime(timerFile, "Inicio de la lectura del archivo");
-                    final Map<Long,Pair<String,Character>> query7Map = CSVReader.getDepartmentsAndProvinces(arguments.getInputPath());
-                    logger.info("Start loading remote data");
-                    map7.putAll(query7Map);
-                    printTime(timerFile, "Fin de la lectura del archivo");
-                    timerFile.append("Tiempo de lectura: " + timer).println();
-                    timer.stop().reset();
-                    timer.start();
-                    printTime(timerFile, "Inicio del trabajo map/reduce");
-                    logger.info("Finished loading remote data");
-                    query = new QueryManager.SeventhQuery(arguments.getAmount());
-                    Job <Long,Pair<String,Character>> job7 = jobTracker.newJob(KeyValueSource.fromMap(map7));
-                    query.output(writer, query.getFuture(job7).get());
-                    printTime(timerFile, "Fin del trabajo map/reduce");
-                    timerFile.append("Query" + arguments.getQueryNumber() + " tardó: " + timer).println();
-                    timer.stop();
-                    logger.info("Finished writing output");
+                    //Pair of provinces that share at least n department names
+                    seventhQuery(client, timer, timerFile, arguments.getInputPath(), writer, arguments.getAmount());
                     break;
             }
             timerFile.close();
@@ -235,11 +102,191 @@ public class Client {
 
     private static void printTime(PrintWriter timerFile, String message){
         timerFile.append(LocalDateTime.now().toString() + " INFO ["
-            + Thread.currentThread().getStackTrace()[2].getMethodName()
-            + "] " + Thread.currentThread().getStackTrace()[2].getFileName()
-            + ":" + Thread.currentThread().getStackTrace()[2].getLineNumber()
-            + " - " + message).println();
+                + Thread.currentThread().getStackTrace()[2].getMethodName()
+                + "] " + Thread.currentThread().getStackTrace()[2].getFileName()
+                + ":" + Thread.currentThread().getStackTrace()[2].getLineNumber()
+                + " - " + message).println();
     }
+
+    private static void firstQuery(HazelcastInstance client, Stopwatch timer, PrintWriter timerFile, String inputPath, PrintWriter writer) throws ExecutionException, InterruptedException {
+        JobTracker jobTracker = client.getJobTracker("tracker");
+        logger.info("Creating local map with data");
+        final IMap<Long,Character> map1 = client.getMap("56382-54308-55291-53559-map1");
+        map1.clear();
+        timer.start();
+        printTime(timerFile, "Inicio de la lectura del archivo");
+        Map<Long,Character> query1Map = CSVReader.getRegions(inputPath);
+        printTime(timerFile, "Fin de la lectura del archivo");
+        timerFile.append("Tiempo de lectura: " + timer).println();
+        timer.stop().reset();
+        timer.start();
+        printTime(timerFile, "Inicio del trabajo map/reduce");
+        logger.info("Start loading remote data");
+        map1.putAll(query1Map);
+        logger.info("Finished loading remote data");
+        Query query = new QueryManager.FirstQuery();
+        Job <Long,Character> job1 = jobTracker.newJob(KeyValueSource.fromMap(map1));
+        query.output(writer, query.getFuture(job1).get());
+        printTime(timerFile, "Fin del trabajo map/reduce");
+        timerFile.append("Query 1 tardó: " + timer).println();
+        timer.stop();
+        logger.info("Finished writing output");
+
+    }
+
+    private static void secondQuery(HazelcastInstance client, Stopwatch timer, PrintWriter timerFile, String inputPath, PrintWriter writer, String province, Integer n) throws ExecutionException, InterruptedException {
+
+        JobTracker jobTracker = client.getJobTracker("tracker");
+        logger.info("Creating local map with data");
+        timer.start();
+        printTime(timerFile, "Inicio de la lectura del archivo");
+        Map<Long, String> query2Map = CSVReader.departmentInProv(inputPath, province);
+        IMap<Long,String> map2 = client.getMap("56382-54308-55291-53559-map2");
+        map2.clear();
+        logger.info("Start loading remote data");
+        map2.putAll(query2Map);
+        printTime(timerFile, "Fin de la lectura del archivo");
+        timerFile.append("Tiempo de lectura: " + timer).println();
+        timer.stop().reset();
+        timer.start();
+        printTime(timerFile, "Inicio del trabajo map/reduce");
+        logger.debug("map size " + map2.size());
+        logger.info("Finished loading remote data");
+        Job<Long, String> job2 = jobTracker.newJob(KeyValueSource.fromMap(map2));
+        Query query = new QueryManager.SecondQuery(n);
+        query.output(writer, query.getFuture(job2).get());
+        printTime(timerFile, "Fin del trabajo map/reduce");
+        timerFile.append("Query 2 tardó: " + timer).println();
+        timer.stop();
+    }
+
+
+    public static void thirdQuery(HazelcastInstance client, Stopwatch timer, PrintWriter timerFile, String inputPath, PrintWriter writer) throws ExecutionException, InterruptedException {
+        JobTracker jobTracker = client.getJobTracker("tracker");
+        logger.info("Creating local map with data");
+        timer.start();
+        printTime(timerFile, "Inicio de la lectura del archivo");
+        Map<Long, Pair<Character, ActivityCondition>> auxMap = CSVReader.getConditionByRegion(inputPath);
+        IMap<Long, Pair<Character, ActivityCondition>> map3 = client.getMap("56382-54308-55291-53559-map3");
+        map3.clear();
+        logger.info("Start loading remote data");
+        map3.putAll(auxMap);
+        printTime(timerFile, "Fin de la lectura del archivo");
+        timerFile.append("Tiempo de lectura: " + timer).println();
+        timer.stop().reset();
+        timer.start();
+        printTime(timerFile, "Inicio del trabajo map/reduce");
+        logger.info("Finished loading remote data");
+        Job<Long, Pair<Character, ActivityCondition>> job3 = jobTracker.newJob(KeyValueSource.fromMap(map3));
+        Query query = new QueryManager.ThirdQuery();
+        query.output(writer, query.getFuture(job3).get());
+        printTime(timerFile, "Fin del trabajo map/reduce");
+        timerFile.append("Query 3 tardó: " + timer).println();
+        timer.stop();
+        logger.info("Finished writing output");
+    }
+
+    public static void fourthQuery(HazelcastInstance client, Stopwatch timer, PrintWriter timerFile, String inputPath, PrintWriter writer) throws ExecutionException, InterruptedException {
+        JobTracker jobTracker = client.getJobTracker("tracker");
+        logger.info("Creating local map with data");
+        timer.start();
+        printTime(timerFile, "Inicio de la lectura del archivo");
+        final IMap<Integer,Character> map4 = client.getMap("56382-54308-55291-53559-map4");
+        map4.clear();
+        Map<Integer,Character> otherMap4 = CSVReader.getHomesByHomeKey(inputPath);
+        logger.info("Start loading remote data");
+        map4.putAll(otherMap4);
+        printTime(timerFile, "Fin de la lectura del archivo");
+        timerFile.append("Tiempo de lectura: " + timer).println();
+        timer.stop().reset();
+        timer.start();
+        printTime(timerFile, "Inicio del trabajo map/reduce");
+        logger.info("Finished loading remote data");
+        Query query = new QueryManager.FourthQuery();
+        Job <Integer,Character> job4 = jobTracker.newJob(KeyValueSource.fromMap(map4));
+        query.output(writer, query.getFuture(job4).get());
+        printTime(timerFile, "Fin del trabajo map/reduce");
+        timerFile.append("Query 4 tardó: " + timer).println();
+        timer.stop();
+        logger.info("Finished writing output");
+    }
+
+    public static void fifthQuery(HazelcastInstance client, Stopwatch timer, PrintWriter timerFile, String inputPath, PrintWriter writer) throws ExecutionException, InterruptedException {
+        JobTracker jobTracker = client.getJobTracker("tracker");
+        logger.info("Creating local map with data");
+        timer.start();
+        printTime(timerFile, "Inicio de la lectura del archivo");
+        final IMap<Long,Pair<Character,Integer>> map5 = client.getMap("56382-54308-55291-53559-map5");
+        map5.clear();
+        Map<Long,Pair<Character,Integer>> otherMap5 = CSVReader.getHomesByRegionRawData(inputPath);
+        logger.info("Start loading remote data");
+        map5.putAll(otherMap5);
+        printTime(timerFile, "Fin de la lectura del archivo");
+        timerFile.append("Tiempo de lectura: " + timer).println();
+        timer.stop().reset();
+        timer.start();
+        printTime(timerFile, "Inicio del trabajo map/reduce");
+        logger.info("Finished loading remote data");
+        Query query = new QueryManager.FifthQuery();
+        Job <Long,Pair<Character,Integer>> job5 = jobTracker.newJob(KeyValueSource.fromMap(map5));
+        query.output(writer, query.getFuture(job5).get());
+        printTime(timerFile, "Fin del trabajo map/reduce");
+        timerFile.append("Query 5 tardó: " + timer).println();
+        timer.stop();
+        logger.info("Finished writing output");
+    }
+
+    public static void sixthQuery(HazelcastInstance client, Stopwatch timer, PrintWriter timerFile, String inputPath, PrintWriter writer, Integer n) throws ExecutionException, InterruptedException {
+        JobTracker jobTracker = client.getJobTracker("tracker");
+        logger.info("Creating local map with data");
+        timer.start();
+        printTime(timerFile, "Inicio de la lectura del archivo");
+        Map<Long, String> auxMap6 = CSVReader.getDepartmentsInProvinces(inputPath);
+        IMap<Long, String> map6 = client.getMap("56382-54308-55291-53559-map6");
+        map6.clear();
+        logger.info("Start loading remote data");
+        map6.putAll(auxMap6);
+        printTime(timerFile, "Fin de la lectura del archivo");
+        timerFile.append("Tiempo de lectura: " + timer).println();
+        timer.stop().reset();
+        timer.start();
+        printTime(timerFile, "Inicio del trabajo map/reduce");
+        logger.info("Finished loading remote data");
+        Job<Long, String> job6 = jobTracker.newJob(KeyValueSource.fromMap(map6));
+        Query query = new QueryManager.SixthQuery(n);
+        query.output(writer, query.getFuture(job6).get());
+        printTime(timerFile, "Fin del trabajo map/reduce");
+        timerFile.append("Query 6 tardó: " + timer).println();
+        timer.stop();
+        logger.info("Finished writing output");
+    }
+
+    public static void seventhQuery(HazelcastInstance client, Stopwatch timer, PrintWriter timerFile, String inputPath, PrintWriter writer, Integer n) throws ExecutionException, InterruptedException {
+        JobTracker jobTracker = client.getJobTracker("tracker");
+        logger.info("Creating local map with data");
+        final IMap<Long,Pair<String,Character>> map7 = client.getMap("56382-54308-55291-53559-map7");
+        map7.clear();
+        timer.start();
+        printTime(timerFile, "Inicio de la lectura del archivo");
+        final Map<Long,Pair<String,Character>> query7Map = CSVReader.getDepartmentsAndProvinces(inputPath);
+        logger.info("Start loading remote data");
+        map7.putAll(query7Map);
+        printTime(timerFile, "Fin de la lectura del archivo");
+        timerFile.append("Tiempo de lectura: " + timer).println();
+        timer.stop().reset();
+        timer.start();
+        printTime(timerFile, "Inicio del trabajo map/reduce");
+        logger.info("Finished loading remote data");
+        Query query = new QueryManager.SeventhQuery(n);
+        Job <Long,Pair<String,Character>> job7 = jobTracker.newJob(KeyValueSource.fromMap(map7));
+        query.output(writer, query.getFuture(job7).get());
+        printTime(timerFile, "Fin del trabajo map/reduce");
+        timerFile.append("Query 7 tardó: " + timer).println();
+        timer.stop();
+        logger.info("Finished writing output");
+    }
+
+
 
 }
 

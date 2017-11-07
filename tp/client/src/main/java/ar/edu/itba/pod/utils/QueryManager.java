@@ -77,7 +77,7 @@ public class QueryManager {
 
     /**
      *
-     *the n most populated departments in a particular province (the province has already been filtered previously)
+     * The n most populated departments in a particular province (the province has already been filtered previously)
      *
      * Key in: id
      * Value in: department
@@ -185,7 +185,7 @@ public class QueryManager {
     }
 
     /**
-     * departments that appear in at least n distinct provinces, ordered decreasingly by number of apparitions
+     * Departments that appear in at least n distinct provinces, ordered decreasingly by number of apparitions
      *
      * Key in: id
      * Value in: department
